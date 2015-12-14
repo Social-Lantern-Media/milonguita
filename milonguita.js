@@ -166,6 +166,13 @@ if (Meteor.isClient) {
 	};
 
 	Template.editPublication.rendered = function (){
+		// Initialize the date picker		
+		$('#edit-datepicker').datetimepicker({
+								    inline: true,
+								    format: 'MM/DD/YYYY'
+								});
+		
+		// Make client-side validation available
 		$('.edit-publication').validate();
 	};
 
@@ -240,16 +247,52 @@ Meteor.methods({
 	},
 	updatePublication: function(pubId, newPub){
 		var oldPub = Publications.findOne(pubId);
+
 		if (oldPub.private && oldPub.owner !== Meteor.userId()){
 			// If the publication is private, make sure only the owner can update it.
 			throw new Meteor.Error("not-authorized");
 		}
+		
+		// Server-side validations 
+		if (!this.isSimulation){
+			// Check helpers
+			NonEmptyString = Match.Where(function (x) {
+				check(x, String);
+				return x.length > 0;
+			});
+
+			UrlMatch = Match.Where(function (x) {
+							 check(x, String);
+							 var urlRegex = /^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
+
+							 return urlRegex.test(x);
+						  });
+ 
+			// Check all the data received
+			check(newPub, {
+				name: NonEmptyString,
+				type: Match.Where(function(x){
+							check(x, String);
+							return x === "milonga" || x === "event" || x === "practica";
+						}),
+				description: NonEmptyString,
+				address: NonEmptyString,
+				date: Match.Where(function(x){
+							var y = new Date(x);
+							return Match.test(y, Date);
+						}),
+				cost: NonEmptyString,
+				time: NonEmptyString,
+				fbLink: UrlMatch
+			});
+		}	
+
 
 		Publications.update(pubId, {$set: { name: newPub['name'],
 														type: newPub['type'],
 														description: newPub['description'],
 														address: newPub['address'],
-														date: newPub['date'],
+														date: new Date(newPub['date']),
 														cost: newPub['cost'],
 														time: newPub['time'],
 														fbLink: newPub['fbLink']

@@ -73,9 +73,7 @@
 				<input type="text" name="address" class="required" placeholder="address" />
 			</div>
 			<div class="col-md-4 col-md-offset-4">				
-				<div >
 					<input id="add-datepicker" name="date" class="required date" type="hidden" />
-				</div>
 			</div>
 			<div class="col-md-12">				
 				<input type="text" name="cost" class="required" placeholder="cost" />
@@ -116,8 +114,8 @@
 				<div class="col-md-12">				
 					<input type="text" name="address" class="required" value="{{editInfo.address}}" />
 				</div>
-				<div class="col-md-12">				
-					<input type="text" name="date" class="required" value="{{editInfo.date}}" />
+				<div class="col-md-4 col-md-offset-4">				
+					<input id="edit-datepicker" name="date" class="required date" type="hidden" />
 				</div>
 				<div class="col-md-12">				
 					<input type="text" name="cost" class="required" value="{{editInfo.cost}}" />
@@ -126,7 +124,7 @@
 					<input type="text" name="time" class="required" value="{{editInfo.time}}" />
 				</div>
 				<div class="col-md-12">				
-					<input type="text" name="fbLink" class="required" value="{{editInfo.fbLink}}" />
+					<input type="text" name="fbLink" class="required url" value="{{editInfo.fbLink}}" />
 				</div>
 				<div class="col-md-12">				
 					<input type="submit" value="Edit Publication" />
