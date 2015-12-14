@@ -156,6 +156,12 @@ if (Meteor.isClient) {
 
 	// Client side validations 
 	Template.addPublication.rendered = function () {
+		// Initialize the date picker		
+		$('#add-datepicker').datetimepicker({
+								    inline: true,
+								    format: 'MM/DD/YYYY'
+								});
+		// Make client-side validation available
 		$('.new-publication').validate();
 	};
 
@@ -199,7 +205,10 @@ Meteor.methods({
 						}),
 				description: NonEmptyString,
 				address: NonEmptyString,
-				date: Date,
+				date: Match.Where(function(x){
+							var y = new Date(x);
+							return Match.test(y, Date);
+						}),
 				cost: NonEmptyString,
 				time: NonEmptyString,
 				fbLink: UrlMatch
@@ -212,7 +221,7 @@ Meteor.methods({
 			createdAt: new Date(),
 			description: pub['description'],
 			address: pub['address'],
-			date: pub['date'],
+			date: new Date(pub['date']),
 			cost: pub['cost'],
 			time: pub['time'],
 			fbLink: pub['fbLink'],
