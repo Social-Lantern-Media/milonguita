@@ -28,35 +28,141 @@ if (Meteor.isClient) {
 		}
 	});
 
-	Template.body.events({
-		"submit .new-publication": function (event){
-			// Prevent default browser form submit
-			event.preventDefault();
-
-			// Get value from form element
-			var name = event.target.text.value;
-
-			// Insert a publication into the collection
-			Meteor.call("addPublication", name);
-
-			// Clear form
-			event.target.text.value = "";
+	Template.addPublication.helpers({
+		showPubForm: function(){
+			return Session.get("showPubForm");
+		},
+		isTypeMilonga: function(pubType){
+			return pubType === "milonga" ? 'selected' : '';
+		},
+		isTypeEvent: function(pubType){
+			return pubType === "event" ? 'selected' : '';
+		},
+		isTypePractica: function(pubType){
+			return pubType === "practica" ? 'selected' : '';
 		}
 	});
 
-	Template.publication.events({
-		"click .toggle-checked": function(){
-			// Set the checked property to the opposite of its current value
-			var newName = "newName"			
-			Meteor.call("updatePublication", this._id, newName);
+	Template.editPublication.helpers({
+		showEditPubForm: function(){
+			return Session.get("showEditPubForm");
 		},
+		editInfo: function(){
+			return Publications.findOne(Session.get("showEditPubFormId"));
+		},
+		isTypeMilonga: function(pubType){
+			return pubType === "milonga" ? 'selected' : '';
+		},
+		isTypeEvent: function(pubType){
+			return pubType === "event" ? 'selected' : '';
+		},
+		isTypePractica: function(pubType){
+			return pubType === "practica" ? 'selected' : '';
+		}
+	});
+
+	Template.body.events({
+		
+	});
+
+	Template.publication.events({
 		"click .delete": function(){
 			Meteor.call("deletePublication", this._id);
 		},
 		"click .toggle-private": function(){
 			Meteor.call("setPrivate", this._id, ! this.private);
+		},
+		"click .show-edit-pub-form": function(event){
+			if (Session.get("showEditPubForm")){
+				Session.set("showEditPubForm", false);
+				Session.set("showEditPubFormId", "");
+			}else{
+				Session.set("showEditPubForm", true);
+				Session.set("showEditPubFormId", this._id);
+			}
 		}
 	});
+
+	Template.addPublication.events({
+		"submit .new-publication": function (event){
+			// Prevent default browser form submit
+			event.preventDefault();
+
+			// Get values from form element
+			var pub = { 'name': event.target.name.value,
+							'type': event.target.type.value,
+							'description': event.target.description.value,
+							'address': event.target.address.value,
+							'date': event.target.date.value,
+							'cost': event.target.cost.value,
+							'time': event.target.time.value,
+							'fbLink': event.target.fbLink.value,
+		 	};
+
+			// Insert a publication into the collection
+			Meteor.call("addPublication", pub);
+
+			// Clear form
+			event.target.name.value = "";
+			event.target.type.value = "";
+			event.target.description.value = "";
+			event.target.address.value = "";
+			event.target.date.value = "";
+			event.target.cost.value = "";
+			event.target.time.value = "";
+			event.target.fbLink.value = "";
+
+			// Hide form
+			Session.set("showPubForm", false);
+
+		},
+		"click .show-pub-form": function(event){
+			Session.get("showPubForm") ? Session.set("showPubForm", false) : Session.set("showPubForm", true);
+		}
+	});
+
+	Template.editPublication.events({
+		"submit .edit-publication": function(event){
+			// Prevent default browser form submit
+			event.preventDefault();
+
+			// Get values from form element
+			var newPub = { 'name': event.target.name.value,
+							'type': event.target.type.value,
+							'description': event.target.description.value,
+							'address': event.target.address.value,
+							'date': event.target.date.value,
+							'cost': event.target.cost.value,
+							'time': event.target.time.value,
+							'fbLink': event.target.fbLink.value,
+		 	};			
+
+			// Update the publication
+			Meteor.call("updatePublication", event.target.id.value, newPub);
+
+			// Clear form
+			event.target.name.value = "";
+			event.target.type.value = "";
+			event.target.description.value = "";
+			event.target.address.value = "";
+			event.target.date.value = "";
+			event.target.cost.value = "";
+			event.target.time.value = "";
+			event.target.fbLink.value = "";
+
+			// Hide form
+			Session.set("showEditPubForm", false);
+		}
+	});
+
+	// Client side validations
+	Template.addPublication.rendered = function () {
+		$('.new-publication').validate();
+	};
+
+	Template.editPublication.rendered = function (){
+		$('.edit-publication').validate();
+	};
 
 	Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
@@ -64,15 +170,22 @@ if (Meteor.isClient) {
 }
 
 Meteor.methods({
-	addPublication: function(name){
+	addPublication: function(pub){
 		// Make sure the user is logged in before inserting a publication
 		if (! Meteor.userId()){
 			throw new Meteor.Error("not-authorized");
 		}
 
 		Publications.insert({
-			name: name,
+			name: pub['name'],
+			type: pub['type'],
 			createdAt: new Date(),
+			description: pub['description'],
+			address: pub['address'],
+			date: pub['date'],
+			cost: pub['cost'],
+			time: pub['time'],
+			fbLink: pub['fbLink'],
 			owner: Meteor.userId(),
 			username: Meteor.user().username
 		});
@@ -86,14 +199,24 @@ Meteor.methods({
 
 		Publications.remove(pubId);
 	},
-	updatePublication: function(pubId, newName){
-		var pub = Publications.findOne(pubId);
-		if (pub.private && pub.owner !== Meteor.userId()){
+	updatePublication: function(pubId, newPub){
+		var oldPub = Publications.findOne(pubId);
+		if (oldPub.private && oldPub.owner !== Meteor.userId()){
 			// If the publication is private, make sure only the owner can update it.
 			throw new Meteor.Error("not-authorized");
 		}
 
-		Publications.update(pubId, {$set: { name: newName } });
+		Publications.update(pubId, {$set: { name: newPub['name'],
+														type: newPub['type'],
+														description: newPub['description'],
+														address: newPub['address'],
+														date: newPub['date'],
+														cost: newPub['cost'],
+														time: newPub['time'],
+														fbLink: newPub['fbLink']
+													 } 
+											}
+		);
 	},
 	setPrivate: function(pubId, setToPrivate){
 		var publication = Publications.findOne(pubId);

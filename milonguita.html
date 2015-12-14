@@ -3,29 +3,35 @@
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 text-center">
+			  <h1>Welcome to Milonguita!</h1>
 
-	{{> loginButtons}}
+				{{> loginButtons}}
 
-	<ul>
-      {{#each publications}}
-        {{> publication}}
-      {{/each}}
-    </ul>
-	{{#if currentUser}}
-	<form class="new-publication">
-   	<input type="text" name="text" placeholder="Type to add new publicationss" />
-   </form>
-	{{/if}}
+				<ul class="list-unstyled">
+					{{#each publications}}
+					  {{> publication}}
+					{{/each}}
+				 </ul>
+				{{#if currentUser}}
+
+				{{> addPublication}}
+				{{> editPublication}}
+				
+				{{/if}}
+			</div>
+		</div>	
+	</div>
 </body>
 
 <template name="publication">
 	<li class="{{#if checked}}checked{{/if}} {{#if private}}private{{/if}}">
     <button class="delete">&times;</button>
  
-    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
-
 	{{#if isOwner}}
+		<button class="show-edit-pub-form">Edit</button>
       <button class="toggle-private">
         {{#if private}}
           Private
@@ -37,5 +43,93 @@
  
     <span class="name"><strong>{{username}}</strong> - {{name}}</span>
   </li>
+</template>
+
+<template name="addPublication">
+	<div class="col-md-12">
+		{{#if showPubForm }}
+		   <button class="show-pub-form">Close</button>	
+		{{else}}
+		   <button class="show-pub-form">Add a new Publication</button>
+		{{/if}}
+	</div>
+
+	<div class="col-md-8 col-md-offset-2 {{#unless showPubForm }}hide{{/unless}}">
+		<form class="new-publication">
+			<div class="col-md-12">				
+				<input type="text" name="name" class="required" placeholder="name" />
+			</div>
+			<div class="col-md-12">				
+				<select name="type" class="required">
+				  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
+				  <option value="event"  {{isTypeEvent editInfo.type}} >Evento</option>
+				  <option value="practica" {{isTypePractica editInfo.type}} >Practica</option>
+				</select>
+			</div>										
+			<div class="col-md-12">				
+				<textarea name="description" class="required" rows="3" placeholder="descripcion" ></textarea>
+			</div>	
+			<div class="col-md-12">				
+				<input type="text" name="address" class="required" placeholder="address" />
+			</div>
+			<div class="col-md-12">				
+				<input type="text" name="date" class="required" placeholder="date" />
+			</div>
+			<div class="col-md-12">				
+				<input type="text" name="cost" class="required" placeholder="cost" />
+			</div>
+			<div class="col-md-12">				
+				<input type="text" name="time" class="required" placeholder="time" />
+			</div>
+			<div class="col-md-12">				
+				<input type="text" name="fbLink" class="required" placeholder="fb link" />
+			</div>
+			<div class="col-md-12">				
+				<input type="submit" value="Add Publication" />
+			</div>
+		</form>
+	</div>
+
+</template>
+
+<template name="editPublication">
+	<div class="col-md-8 col-md-offset-2 {{#unless showEditPubForm }}hide{{/unless}}">
+		<form class="edit-publication">
+				<div class="col-md-12">				
+					<input type="hidden" name="id"  class="required" value="{{editInfo._id}}" />
+				</div>							
+				<div class="col-md-12">				
+					<input type="text" name="name" class="required" value="{{editInfo.name}}" />
+				</div>
+				<div class="col-md-12">				
+					<select name="type" class="required">
+					  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
+					  <option value="event"  {{isTypeEvent editInfo.type}} >Evento</option>
+					  <option value="practica" {{isTypePractica editInfo.type}} >Practica</option>
+					</select>
+				</div>										
+				<div class="col-md-12">				
+					<textarea name="description" class="required" rows="3" value="{{editInfo.description}}" ></textarea>
+				</div>	
+				<div class="col-md-12">				
+					<input type="text" name="address" class="required" value="{{editInfo.address}}" />
+				</div>
+				<div class="col-md-12">				
+					<input type="text" name="date" class="required" value="{{editInfo.date}}" />
+				</div>
+				<div class="col-md-12">				
+					<input type="text" name="cost" class="required" value="{{editInfo.cost}}" />
+				</div>
+				<div class="col-md-12">				
+					<input type="text" name="time" class="required" value="{{editInfo.time}}" />
+				</div>
+				<div class="col-md-12">				
+					<input type="text" name="fbLink" class="required" value="{{editInfo.fbLink}}" />
+				</div>
+				<div class="col-md-12">				
+					<input type="submit" value="Edit Publication" />
+				</div>
+			</form>
+	</div>
 </template>
 
