@@ -104,7 +104,6 @@ if (Meteor.isClient) {
 
 			// Clear form
 			event.target.name.value = "";
-			event.target.type.value = "";
 			event.target.description.value = "";
 			event.target.address.value = "";
 			event.target.date.value = "";
@@ -155,7 +154,7 @@ if (Meteor.isClient) {
 		}
 	});
 
-	// Client side validations
+	// Client side validations 
 	Template.addPublication.rendered = function () {
 		$('.new-publication').validate();
 	};
@@ -175,6 +174,37 @@ Meteor.methods({
 		if (! Meteor.userId()){
 			throw new Meteor.Error("not-authorized");
 		}
+
+		// Server-side validations 
+		if (!this.isSimulation){
+			// Check helpers
+			NonEmptyString = Match.Where(function (x) {
+				check(x, String);
+				return x.length > 0;
+			});
+
+			UrlMatch = Match.Where(function (x) {
+							 check(x, String);
+							 var urlRegex = /^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
+
+							 return urlRegex.test(x);
+						  });
+ 
+			// Check all the data received
+			check(pub, {
+				name: NonEmptyString,
+				type: Match.Where(function(x){
+							check(x, String);
+							return x === "milonga" || x === "event" || x === "practica";
+						}),
+				description: NonEmptyString,
+				address: NonEmptyString,
+				date: Date,
+				cost: NonEmptyString,
+				time: NonEmptyString,
+				fbLink: UrlMatch
+			});
+		}	
 
 		Publications.insert({
 			name: pub['name'],
