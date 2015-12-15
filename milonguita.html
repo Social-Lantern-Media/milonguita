@@ -27,18 +27,11 @@
 </body>
 
 <template name="publication">
-	<li class="{{#if checked}}checked{{/if}} {{#if private}}private{{/if}}">
-    <button class="delete">&times;</button>
+	<li class="">
  
 	{{#if isOwner}}
+      <button class="delete">&times;</button>
 		<button class="show-edit-pub-form">Edit</button>
-      <button class="toggle-private">
-        {{#if private}}
-          Private
-        {{else}}
-          Public
-        {{/if}}
-      </button>
     {{/if}}
  
     <span class="name"><strong>{{username}}</strong> - {{name}}</span>

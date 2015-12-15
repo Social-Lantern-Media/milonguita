@@ -1,14 +1,11 @@
 Publications = new Mongo.Collection("publications");
 
+// Dont allow users to update their 'profile' value.
+Meteor.users.deny({update: function () { return true; }});
+
 if (Meteor.isServer){
-	// Only publish publications that are public or belong to the current user
 	Meteor.publish("publications", function(){
-		return Publications.find({
-			$or: [
-				{ private: {$ne: true} },
-				{ owner: this.userId }
-			]
-		});
+		return Publications.find({});
 	});
 }
 
@@ -68,9 +65,6 @@ if (Meteor.isClient) {
 	Template.publication.events({
 		"click .delete": function(){
 			Meteor.call("deletePublication", this._id);
-		},
-		"click .toggle-private": function(){
-			Meteor.call("setPrivate", this._id, ! this.private);
 		},
 		"click .show-edit-pub-form": function(event){
 			if (Session.get("showEditPubForm")){
@@ -141,7 +135,6 @@ if (Meteor.isClient) {
 
 			// Clear form
 			event.target.name.value = "";
-			event.target.type.value = "";
 			event.target.description.value = "";
 			event.target.address.value = "";
 			event.target.date.value = "";
@@ -238,8 +231,8 @@ Meteor.methods({
 	},
 	deletePublication: function(pubId){
 		var pub = Publications.findOne(pubId);
-		if (pub.private && pub.owner !== Meteor.userId()){
-			// If the publication is private, make sure only the owner can delete it
+		if (pub.owner !== Meteor.userId()){
+			// Make sure only the owner can delete it
 			throw new Meteor.Error("not-authorized");
 		}
 
@@ -248,8 +241,8 @@ Meteor.methods({
 	updatePublication: function(pubId, newPub){
 		var oldPub = Publications.findOne(pubId);
 
-		if (oldPub.private && oldPub.owner !== Meteor.userId()){
-			// If the publication is private, make sure only the owner can update it.
+		if (oldPub.owner !== Meteor.userId()){
+			// Make sure only the owner can update it.
 			throw new Meteor.Error("not-authorized");
 		}
 		
@@ -299,21 +292,22 @@ Meteor.methods({
 													 } 
 											}
 		);
-	},
-	setPrivate: function(pubId, setToPrivate){
-		var publication = Publications.findOne(pubId);
-
-		// Make sure only the task owner can make a publication private
-		if (publication.owner !== Meteor.userId()){
-			throw new Meteor.Error("not-authorized");
-		}
-
-		Publications.update(pubId, { $set: { private: setToPrivate } });
 	}
 });
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    // code to run on server at startup
+		// Create admin user on startup.
+		// Since users cant update their profile, they cant become admins.
+		if ( Meteor.users.find().count() === 0 ) {
+			 Accounts.createUser({
+				  username: 'tiago',
+				  email: 'tiago@admin.com',
+				  password: 'thiago',
+				  profile: {
+						admin: true
+				  }
+			 });
+		}
   });
 }
