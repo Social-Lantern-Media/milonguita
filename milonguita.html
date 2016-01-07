@@ -17,8 +17,11 @@
 				 </ul>
 				{{#if currentUser}}
 
-				{{> addPublication}}
-				{{> editPublication}}
+					{{> addPublication}}
+
+					{{#if showEditPubForm}}
+						{{> editPublication}}
+					{{/if}}
 				
 				{{/if}}
 			</div>
@@ -29,7 +32,7 @@
 <template name="publication">
 	<li class="">
  
-	{{#if isOwner}}
+	{{#if isOwnerOrAdmin }}
       <button class="delete">&times;</button>
 		<button class="show-edit-pub-form">Edit</button>
     {{/if}}

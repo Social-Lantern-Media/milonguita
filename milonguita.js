@@ -7,6 +7,12 @@ if (Meteor.isServer){
 	Meteor.publish("publications", function(){
 		return Publications.find({});
 	});
+
+	// Add a profile object to all the users being created.
+	Accounts.onCreateUser(function(options, user){
+		user.profile = options.profile ? options.profile : { admin: false };
+		return user;
+	}); 
 }
 
 if (Meteor.isClient) {
@@ -16,12 +22,15 @@ if (Meteor.isClient) {
 		publications: function (){
 			// Show newest publications at the top
 			return Publications.find({}, {sort: {createdAt: -1}});
+		},
+		showEditPubForm: function (){
+			return Session.get('showEditPubForm');
 		}
 	});
 
 	Template.publication.helpers({
-		isOwner: function(){
-			return this.owner === Meteor.userId();
+		isOwnerOrAdmin: function(){
+			return (this.owner === Meteor.userId() || (Meteor.user() != null && Meteor.user().profile.admin));
 		}
 	});
 
@@ -164,7 +173,12 @@ if (Meteor.isClient) {
 								    inline: true,
 								    format: 'MM/DD/YYYY'
 								});
-		
+
+		// Get the publication to be edited, and put the date in the datepicker
+		var oldPubId = Session.get('showEditPubFormId');
+		var oldPublication = Publications.findOne({ _id: oldPubId }); 
+		$('#edit-datepicker').data("DateTimePicker").date(new Date(oldPublication.date));
+
 		// Make client-side validation available
 		$('.edit-publication').validate();
 	};
@@ -231,8 +245,9 @@ Meteor.methods({
 	},
 	deletePublication: function(pubId){
 		var pub = Publications.findOne(pubId);
-		if (pub.owner !== Meteor.userId()){
-			// Make sure only the owner can delete it
+		
+		// Make sure only the owner or admin can delete it
+		if (pub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.admin)){
 			throw new Meteor.Error("not-authorized");
 		}
 
@@ -241,8 +256,8 @@ Meteor.methods({
 	updatePublication: function(pubId, newPub){
 		var oldPub = Publications.findOne(pubId);
 
-		if (oldPub.owner !== Meteor.userId()){
-			// Make sure only the owner can update it.
+		// Make sure only the owner or admin can update it.
+		if (oldPub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.admin)){
 			throw new Meteor.Error("not-authorized");
 		}
 		
