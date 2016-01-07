@@ -5,7 +5,16 @@ Meteor.users.deny({update: function () { return true; }});
 
 if (Meteor.isServer){
 	Meteor.publish("publications", function(){
-		return Publications.find({});
+		// Only return the publications for the next week		
+		var dateNow = new Date();
+		var startDate = new Date(dateNow.getTime() - 1 * 24 * 60 * 60 * 1000);
+		var endDate = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+		return Publications.find({
+						date:{
+							$gte:startDate,
+							$lt:endDate
+						}
+					});
 	});
 
 	// Add a profile object to all the users being created.
@@ -163,6 +172,10 @@ if (Meteor.isClient) {
 								    inline: true,
 								    format: 'MM/DD/YYYY'
 								});
+
+		// Select today as minDate
+		$('#add-datepicker').data('DateTimePicker').minDate(new Date());
+
 		// Make client-side validation available
 		$('.new-publication').validate();
 	};
@@ -173,6 +186,9 @@ if (Meteor.isClient) {
 								    inline: true,
 								    format: 'MM/DD/YYYY'
 								});
+
+		// Select today as minDate
+		$('#add-datepicker').data('DateTimePicker').minDate(new Date());
 
 		// Get the publication to be edited, and put the date in the datepicker
 		var oldPubId = Session.get('showEditPubFormId');
@@ -221,7 +237,7 @@ Meteor.methods({
 				address: NonEmptyString,
 				date: Match.Where(function(x){
 							var y = new Date(x);
-							return Match.test(y, Date);
+							return Match.test(y, Date) && y > new Date();
 						}),
 				cost: NonEmptyString,
 				time: NonEmptyString,
