@@ -4,11 +4,11 @@ Publications = new Mongo.Collection("publications");
 Meteor.users.deny({update: function () { return true; }});
 
 if (Meteor.isServer){
-	Meteor.publish("publications", function(){
+	Meteor.publish("publications", function(weekNumber){
 		// Only return the publications for the next week
-		var startDate = moment().startOf('day');
+		var startDate = moment().add(Number(weekNumber)*7, 'days').startOf('day');
 		var endDate = moment(startDate);
-		endDate.add(7, 'days').endOf('day');		
+		endDate.add(6, 'days').endOf('day');		
 
 		return Publications.find({
 						date:{
@@ -26,7 +26,14 @@ if (Meteor.isServer){
 }
 
 if (Meteor.isClient) {
-	Meteor.subscribe("publications");
+
+	// Define a global handle for the subscription, this way it's possible to keep in the
+	// minimongo only the data of the requested week.
+	//  This handle is used in 'Template.daysOfWeek.helpers -> day function'.
+	// If I want to keep all the publications at all times, just need to get rid
+	// of the handler and the stop() function it uses. 	
+	var subscriptionHandle;
+	subscriptionHandle = Meteor.subscribe("publications", Number(Session.get('weekNumber')));
 	
 	Template.body.helpers({
 		publications: function (){
@@ -79,11 +86,21 @@ if (Meteor.isClient) {
 
 	Template.daysOfWeek.helpers({
 		nameOfDay: function(numOfDay){
-			return moment().add(numOfDay, 'days').startOf('day').format('dddd');
+			return moment().add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('dddd');
+		},
+		numberOfDate: function(numOfDay){
+			return moment().add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('D, MMM');
 		},
 		day: function(numOfDay){
-			var startDate = moment().add(numOfDay, 'days').startOf('day');
+			var startDate = moment().add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day');
 			var endDate = moment(startDate).endOf('day');
+
+			
+			if (subscriptionHandle){
+				subscriptionHandle.stop();
+			}			
+
+			subscriptionHandle = Meteor.subscribe("publications", Number(Session.get('weekNumber')));
 
 			return Publications.find({
 								date:{
@@ -343,6 +360,12 @@ Meteor.methods({
 		);
 	}
 });
+
+if (Meteor.isClient){
+	Meteor.startup(function(){
+		Session.set('weekNumber', 0);
+	});
+}
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
