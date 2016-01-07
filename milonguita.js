@@ -5,14 +5,15 @@ Meteor.users.deny({update: function () { return true; }});
 
 if (Meteor.isServer){
 	Meteor.publish("publications", function(){
-		// Only return the publications for the next week		
-		var dateNow = new Date();
-		var startDate = new Date(dateNow.getTime() - 1 * 24 * 60 * 60 * 1000);
-		var endDate = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+		// Only return the publications for the next week
+		var startDate = moment().startOf('day');
+		var endDate = moment(startDate);
+		endDate.add(7, 'days').endOf('day');		
+
 		return Publications.find({
 						date:{
-							$gte:startDate,
-							$lt:endDate
+							$gte:startDate.toDate(),
+							$lt:endDate.toDate()
 						}
 					});
 	});
@@ -77,15 +78,17 @@ if (Meteor.isClient) {
 	});
 
 	Template.daysOfWeek.helpers({
+		nameOfDay: function(numOfDay){
+			return moment().add(numOfDay, 'days').startOf('day').format('dddd');
+		},
 		day: function(numOfDay){
-			var dateNow = new Date();
-			var startDate = new Date(dateNow.getTime() + (numOfDay - 1) * 24 * 60 * 60 * 1000);
-			var endDate = new Date(startDate.getTime() + 1 * 24 * 60 * 60 * 1000);	
-		
+			var startDate = moment().add(numOfDay, 'days').startOf('day');
+			var endDate = moment(startDate).endOf('day');
+
 			return Publications.find({
 								date:{
-									$gte: startDate,
-									$lt: endDate		
+									$gte: startDate.toDate(),
+									$lt: endDate.toDate()		
 								}			
 						});
 		}
@@ -252,7 +255,7 @@ Meteor.methods({
 				address: NonEmptyString,
 				date: Match.Where(function(x){
 							var y = new Date(x);
-							return Match.test(y, Date) && y > new Date();
+							return Match.test(y, Date) && y >= new Date();
 						}),
 				cost: NonEmptyString,
 				time: NonEmptyString,
