@@ -55,6 +55,15 @@ if (Meteor.isClient) {
 		},
 		existsNextWeek: function (){
 			return Session.get('weekNumber') != 3;
+		},
+		showPubInfo: function(){
+			return Session.get('showPubInfo');
+		}
+	});
+
+	Template.infoPublication.helpers({
+		pubInfo: function(){
+			return Publications.findOne(Session.get('showPubInfoId'));
 		}
 	});
 
@@ -108,7 +117,7 @@ if (Meteor.isClient) {
 			var startDate = moment().add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day');
 			var endDate = moment(startDate).endOf('day');
 
-			
+			// If a subscription to 'publications' already existed, stop it
 			if (subscriptionHandle){
 				subscriptionHandle.stop();
 			}			
@@ -125,7 +134,8 @@ if (Meteor.isClient) {
 	});
 
 	Template.body.events({
-		"click .previous-week": function(){
+		"click .previous-week": function(event){
+			event.preventDefault();
 			var weekNumber = Session.get('weekNumber');
 			
 			// Check that the weekNumber is between 0 and 3.
@@ -137,7 +147,8 @@ if (Meteor.isClient) {
 
 			Session.set('weekNumber', weekNumber-1);
 		},
-		"click .next-week": function(){
+		"click .next-week": function(event){
+			event.preventDefault();
 			var weekNumber = Session.get('weekNumber');
 			
 			// Check that the weekNumber is between 0 and 3.
@@ -149,6 +160,15 @@ if (Meteor.isClient) {
 
 			Session.set('weekNumber', weekNumber+1);
 		}		
+	});
+
+	Template.infoPublication.events({
+		"click .close-info-pub": function(event){
+			event.preventDefault();
+
+			Session.set('showPubInfo', false);
+			Session.set('showPubInfoId', '');
+		}
 	});
 
 	Template.publication.events({
@@ -163,6 +183,12 @@ if (Meteor.isClient) {
 				Session.set("showEditPubForm", true);
 				Session.set("showEditPubFormId", this._id);
 			}
+		},
+		"click .pub-info": function(event){
+			event.preventDefault();
+
+			Session.set('showPubInfo', true);
+			Session.set('showPubInfoId', this._id);
 		}
 	});
 

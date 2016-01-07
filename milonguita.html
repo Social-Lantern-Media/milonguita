@@ -29,7 +29,12 @@
 				
 				{{/if}}
 			</div>
-		</div>	
+		</div>
+		
+		{{#if showPubInfo}}
+			{{> infoPublication}}		
+		{{/if}}
+	
 		<div class="row">
 			<div class="col-md-12 text-center">
 				{{> daysOfWeek}}
@@ -39,15 +44,28 @@
 </body>
 
 <template name="publication">
-	<li class="">
- 
+	<li>
 	{{#if isOwnerOrAdmin }}
       <button class="delete">&times;</button>
 		<button class="show-edit-pub-form">Edit</button>
     {{/if}}
  
-    <span class="name"><strong>{{username}}</strong> - {{name}}</span>
+    <span><strong>{{username}}</strong> - <a class="pub-info" href="#">{{name}}</a></span>
   </li>
+</template>
+
+<template name="infoPublication">
+	<div class="col-md-12">	
+		<p>Name: {{pubInfo.name}}</p>
+		<p>Type: {{pubInfo.type}}</p>
+		<p>Description: {{pubInfo.description}}</p>
+		<p>Address: {{pubInfo.address}}</p>
+		<p>Date: {{pubInfo.date}}</p>
+		<p>Cost: {{pubInfo.cost}}</p>
+		<p>Time: {{pubInfo.time}}</p>
+		<p>Facebook: {{pubInfo.fbLink}}</p>
+		<button class="close-info-pub">Close</button>
+	</div>
 </template>
 
 <template name="addPublication">
