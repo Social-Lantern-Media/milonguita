@@ -76,6 +76,21 @@ if (Meteor.isClient) {
 		}
 	});
 
+	Template.daysOfWeek.helpers({
+		day: function(numOfDay){
+			var dateNow = new Date();
+			var startDate = new Date(dateNow.getTime() + (numOfDay - 1) * 24 * 60 * 60 * 1000);
+			var endDate = new Date(startDate.getTime() + 1 * 24 * 60 * 60 * 1000);	
+		
+			return Publications.find({
+								date:{
+									$gte: startDate,
+									$lt: endDate		
+								}			
+						});
+		}
+	});
+
 	Template.body.events({
 		
 	});

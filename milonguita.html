@@ -26,6 +26,11 @@
 				{{/if}}
 			</div>
 		</div>	
+		<div class="row">
+			<div class="col-md-12 text-center">
+				{{> daysOfWeek}}
+			</div>
+		</div>
 	</div>
 </body>
 
@@ -129,3 +134,39 @@
 	</div>
 </template>
 
+<template name="daysOfWeek">
+	<h4>Today</h4>
+	{{# each day 0}}
+		{{> publication}}
+	{{/each}}
+
+	<h4>Today+1</h4>
+	{{# each day 1}}
+		{{> publication}}
+	{{/each}}
+
+	<h4>Today+2</h4>
+	{{#each day 2}}
+		{{> publication}}
+	{{/each}}
+
+	<h4>Today+3</h4>
+	{{#each day 3}}
+		{{> publication}}
+	{{/each}}
+
+	<h4>Today+4</h4>
+	{{#each day 4}}
+		{{> publication}}
+	{{/each}}
+
+	<h4>Today+5</h4>
+	{{#each day 5}}
+		{{> publication}}
+	{{/each}}
+
+	<h4>Today+6</h4>
+	{{#each day 6}}
+		{{> publication}}
+	{{/each}}
+</template>
