@@ -5,7 +5,14 @@ Meteor.users.deny({update: function () { return true; }});
 
 if (Meteor.isServer){
 	Meteor.publish("publications", function(weekNumber){
-		// Only return the publications for the next week
+		// Check that weekNumber is valid (between 0 and 3).
+		validWeek = Match.Where(function(x){
+			check(x, Number);
+			return x >= 0 && x <= 3;
+		});
+		check(weekNumber, validWeek);
+
+		// Only return the publications for the specified week
 		var startDate = moment().add(Number(weekNumber)*7, 'days').startOf('day');
 		var endDate = moment(startDate);
 		endDate.add(6, 'days').endOf('day');		
@@ -42,6 +49,12 @@ if (Meteor.isClient) {
 		},
 		showEditPubForm: function (){
 			return Session.get('showEditPubForm');
+		},
+		existsPreviousWeek: function (){
+			return Session.get('weekNumber') != 0;
+		},
+		existsNextWeek: function (){
+			return Session.get('weekNumber') != 3;
 		}
 	});
 
@@ -112,7 +125,30 @@ if (Meteor.isClient) {
 	});
 
 	Template.body.events({
-		
+		"click .previous-week": function(){
+			var weekNumber = Session.get('weekNumber');
+			
+			// Check that the weekNumber is between 0 and 3.
+			validWeek = Match.Where(function(x){
+				check(x, Number);
+				return x >= 0 && x <= 3;
+			});
+			check(weekNumber-1, validWeek); 
+
+			Session.set('weekNumber', weekNumber-1);
+		},
+		"click .next-week": function(){
+			var weekNumber = Session.get('weekNumber');
+			
+			// Check that the weekNumber is between 0 and 3.
+			validWeek = Match.Where(function(x){
+				check(x, Number);
+				return x >= 0 && x <= 3;
+			});
+			check(weekNumber+1, validWeek);
+
+			Session.set('weekNumber', weekNumber+1);
+		}		
 	});
 
 	Template.publication.events({

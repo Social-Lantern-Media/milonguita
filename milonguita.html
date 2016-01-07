@@ -10,6 +10,15 @@
 
 				{{> loginButtons}}
 
+				<div class="col-md-12 text-right">
+					{{#if existsPreviousWeek}}
+					   <button class="previous-week">Previous Week</button>
+					{{/if}}
+					{{#if existsNextWeek}}
+					   <button class="next-week">Next Week</button>
+					{{/if}}
+				</div>
+
 				{{#if currentUser}}
 
 					{{> addPublication}}
