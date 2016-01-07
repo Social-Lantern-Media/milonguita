@@ -138,7 +138,7 @@ if (Meteor.isClient) {
 			event.preventDefault();
 			var weekNumber = Session.get('weekNumber');
 			
-			// Check that the weekNumber is between 0 and 3.
+			// Check that the weekNumber is valid (between 0 and 3).
 			validWeek = Match.Where(function(x){
 				check(x, Number);
 				return x >= 0 && x <= 3;
@@ -151,7 +151,7 @@ if (Meteor.isClient) {
 			event.preventDefault();
 			var weekNumber = Session.get('weekNumber');
 			
-			// Check that the weekNumber is between 0 and 3.
+			// Check that the weekNumber is valid (between 0 and 3).
 			validWeek = Match.Where(function(x){
 				check(x, Number);
 				return x >= 0 && x <= 3;
