@@ -206,6 +206,7 @@ if (Meteor.isClient) {
 							'cost': event.target.cost.value,
 							'time': event.target.time.value,
 							'fbLink': event.target.fbLink.value,
+							'keepPublication': event.target.keepPublication.checked
 		 	};
 
 			// Insert a publication into the collection
@@ -216,9 +217,11 @@ if (Meteor.isClient) {
 			event.target.description.value = "";
 			event.target.address.value = "";
 			event.target.date.value = "";
+			$('#add-datepicker').data('DateTimePicker').clear();
 			event.target.cost.value = "";
 			event.target.time.value = "";
 			event.target.fbLink.value = "";
+			event.target.keepPublication.checked = false;
 
 			// Hide form
 			Session.set("showPubForm", false);
@@ -253,6 +256,7 @@ if (Meteor.isClient) {
 			event.target.description.value = "";
 			event.target.address.value = "";
 			event.target.date.value = "";
+			$('#add-datepicker').data('DateTimePicker').clear();
 			event.target.cost.value = "";
 			event.target.time.value = "";
 			event.target.fbLink.value = "";
@@ -267,11 +271,12 @@ if (Meteor.isClient) {
 		// Initialize the date picker		
 		$('#add-datepicker').datetimepicker({
 								    inline: true,
-								    format: 'MM/DD/YYYY'
+								    format: 'MM/DD/YYYY',
+									 useCurrent: false
 								});
 
 		// Select today as minDate
-		$('#add-datepicker').data('DateTimePicker').minDate(new Date());
+		$('#add-datepicker').data('DateTimePicker').minDate(moment());
 
 		// Make client-side validation available
 		$('.new-publication').validate();
@@ -285,12 +290,12 @@ if (Meteor.isClient) {
 								});
 
 		// Select today as minDate
-		$('#add-datepicker').data('DateTimePicker').minDate(new Date());
+		$('#add-datepicker').data('DateTimePicker').minDate(moment());
 
 		// Get the publication to be edited, and put the date in the datepicker
 		var oldPubId = Session.get('showEditPubFormId');
 		var oldPublication = Publications.findOne({ _id: oldPubId }); 
-		$('#edit-datepicker').data("DateTimePicker").date(new Date(oldPublication.date));
+		$('#edit-datepicker').data("DateTimePicker").date(moment(oldPublication.date));
 
 		// Make client-side validation available
 		$('.edit-publication').validate();
@@ -338,7 +343,8 @@ Meteor.methods({
 						}),
 				cost: NonEmptyString,
 				time: NonEmptyString,
-				fbLink: UrlMatch
+				fbLink: UrlMatch,
+				keepPublication: Match.Where(function(x){return Match.test(x, Boolean);})
 			});
 		}	
 
@@ -352,6 +358,7 @@ Meteor.methods({
 			cost: pub['cost'],
 			time: pub['time'],
 			fbLink: pub['fbLink'],
+			keepPublication: pub['keepPublication'],
 			owner: Meteor.userId(),
 			username: Meteor.user().username
 		});
