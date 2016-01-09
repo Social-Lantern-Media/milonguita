@@ -276,7 +276,7 @@ if (Meteor.isClient) {
 								});
 
 		// Select today as minDate
-		$('#add-datepicker').data('DateTimePicker').minDate(moment());
+		$('#add-datepicker').data('DateTimePicker').minDate(moment().toDate());
 
 		// Make client-side validation available
 		$('.new-publication').validate();
@@ -290,12 +290,12 @@ if (Meteor.isClient) {
 								});
 
 		// Select today as minDate
-		$('#add-datepicker').data('DateTimePicker').minDate(moment());
+		$('#add-datepicker').data('DateTimePicker').minDate(moment().toDate());
 
 		// Get the publication to be edited, and put the date in the datepicker
 		var oldPubId = Session.get('showEditPubFormId');
 		var oldPublication = Publications.findOne({ _id: oldPubId }); 
-		$('#edit-datepicker').data("DateTimePicker").date(moment(oldPublication.date));
+		$('#edit-datepicker').data("DateTimePicker").date(moment(oldPublication.date).toDate());
 
 		// Make client-side validation available
 		$('.edit-publication').validate();
@@ -339,7 +339,7 @@ Meteor.methods({
 				address: NonEmptyString,
 				date: Match.Where(function(x){
 							var y = new Date(x);
-							return Match.test(y, Date) && y >= new Date();
+							return Match.test(y, Date) && y >= moment().startOf('day').toDate();
 						}),
 				cost: NonEmptyString,
 				time: NonEmptyString,
@@ -351,7 +351,7 @@ Meteor.methods({
 		Publications.insert({
 			name: pub['name'],
 			type: pub['type'],
-			createdAt: new Date(),
+			createdAt: moment().toDate(),
 			description: pub['description'],
 			address: pub['address'],
 			date: new Date(pub['date']),
@@ -362,6 +362,27 @@ Meteor.methods({
 			owner: Meteor.userId(),
 			username: Meteor.user().username
 		});
+
+		// If the user wants to keep the publication, then add publications for the next month.
+		if (pub['keepPublication']){
+			// Insert the publication for the next month.
+			for(var i=1; i<=3; i++){
+				Publications.insert({
+					name: pub['name'],
+					type: pub['type'],
+					createdAt: moment().toDate(),
+					description: pub['description'],
+					address: pub['address'],
+					date: moment(new Date(pub['date'])).add(7*i, 'days').toDate(),
+					cost: pub['cost'],
+					time: pub['time'],
+					fbLink: pub['fbLink'],
+					keepPublication: pub['keepPublication'],
+					owner: Meteor.userId(),
+					username: Meteor.user().username
+				});
+			};
+		}
 	},
 	deletePublication: function(pubId){
 		var pub = Publications.findOne(pubId);
@@ -407,7 +428,7 @@ Meteor.methods({
 				address: NonEmptyString,
 				date: Match.Where(function(x){
 							var y = new Date(x);
-							return Match.test(y, Date);
+							return Match.test(y, Date) && y >= moment().startOf('day').toDate();
 						}),
 				cost: NonEmptyString,
 				time: NonEmptyString,
