@@ -64,6 +64,9 @@
 		<p>Cost: {{pubInfo.cost}}</p>
 		<p>Time: {{pubInfo.time}}</p>
 		<p>Facebook: {{pubInfo.fbLink}}</p>
+		<div class="col-md-4 col-md-offset-4">
+			<img src="{{c.url pubInfo.picPublicId}}" class="img-responsive" />
+		</div>
 		<button class="close-info-pub">Close</button>
 	</div>
 </template>
@@ -109,6 +112,9 @@
 			</div>
 			<div class="col-md-12">
 				<input type="checkbox" name="keepPublication"/> Keep Publication.
+			</div>
+			<div class="col-md-12 text-center">
+				<input type="file" name="foto"/>
 			</div>
 			<div class="col-md-12">				
 				<input type="submit" value="Add Publication" />

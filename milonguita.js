@@ -193,9 +193,26 @@ if (Meteor.isClient) {
 	});
 
 	Template.addPublication.events({
+		"change input[type='file']": function(e){
+			files = e.currentTarget.files;
+	
+			Cloudinary.upload(files,{
+				folder:"secret"
+				}, function(err,res){
+						if (err == null){
+							Session.set("pub_pic_id", res.public_id);
+						}
+					}
+			);	
+		},
 		"submit .new-publication": function (event){
 			// Prevent default browser form submit
 			event.preventDefault();
+
+			// Get pic public_id from Session and delete it
+			var pic_public_id = Session.get("pub_pic_id");
+			Session.set("pub_pic_id", "");
+			delete Session.keys.pub_pic_id;
 
 			// Get values from form element
 			var pub = { 'name': event.target.name.value,
@@ -206,6 +223,7 @@ if (Meteor.isClient) {
 							'cost': event.target.cost.value,
 							'time': event.target.time.value,
 							'fbLink': event.target.fbLink.value,
+							'picPublicId': pic_public_id,
 							'keepPublication': event.target.keepPublication.checked
 		 	};
 
@@ -344,6 +362,7 @@ Meteor.methods({
 				cost: NonEmptyString,
 				time: NonEmptyString,
 				fbLink: UrlMatch,
+				picPublicId: NonEmptyString,
 				keepPublication: Match.Where(function(x){return Match.test(x, Boolean);})
 			});
 		}	
@@ -358,6 +377,7 @@ Meteor.methods({
 			cost: pub['cost'],
 			time: pub['time'],
 			fbLink: pub['fbLink'],
+			picPublicId: pub['picPublicId'],
 			keepPublication: pub['keepPublication'],
 			owner: Meteor.userId(),
 			username: Meteor.user().username
@@ -451,12 +471,27 @@ Meteor.methods({
 	}
 });
 
+// Cloudinary
+if (Meteor.isServer){
+	Cloudinary.config({
+		cloud_name: 'dxrlmnw4s',
+		api_key: '591251777449945',
+		api_secret: 'LZ1m4KZUPXdVZrMfBRD8PgtcesI'});
+}
+
+if (Meteor.isClient){
+	$.cloudinary.config({
+		cloud_name:"dxrlmnw4s"});
+}
+
+// Start Up Client
 if (Meteor.isClient){
 	Meteor.startup(function(){
 		Session.set('weekNumber', 0);
 	});
 }
 
+// Start Up Server
 if (Meteor.isServer) {
   Meteor.startup(function () {
 		// Create admin user on startup.
