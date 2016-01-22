@@ -194,16 +194,32 @@ if (Meteor.isClient) {
 
 	Template.addPublication.events({
 		"change input[type='file']": function(e){
-			files = e.currentTarget.files;
+			// Check if the value in the input is an image, if it is make the request to Cloudinary.
+			var form_validator = $('.new-publication').validate({
+											rules: {
+												foto: {
+													accept: "image/*",
+													extension: "png|jpe?g|gif"
+												}
+											}
+										});			
+
+			if (form_validator.element("#foto")){
+				files = e.currentTarget.files;
 	
-			Cloudinary.upload(files,{
-				folder:"secret"
-				}, function(err,res){
-						if (err == null){
-							Session.set("pub_pic_id", res.public_id);
+				Cloudinary.upload(files,{
+					folder:"secret",
+					resource_type: "image"
+					}, function(err,res){
+							if (err == null){
+								Session.set("pub_pic_id", res.public_id);
+							}else{
+								// show client side validation for the image.
+								console.log("not an image!");
+							}
 						}
-					}
-			);	
+				);	
+			}
 		},
 		"submit .new-publication": function (event){
 			// Prevent default browser form submit
@@ -297,7 +313,14 @@ if (Meteor.isClient) {
 		$('#add-datepicker').data('DateTimePicker').minDate(moment().toDate());
 
 		// Make client-side validation available
-		$('.new-publication').validate();
+		$('.new-publication').validate({
+			rules: {
+				foto: {
+					accept: "image/*",
+					extension: "png|jpe?g|gif"
+				}
+			}
+		});
 	};
 
 	Template.editPublication.rendered = function (){
@@ -345,6 +368,12 @@ Meteor.methods({
 
 							 return urlRegex.test(x);
 						  });
+
+			CloudinaryPublicIdMatch = Match.Where(function (x){
+												check(x, String);
+												var regex = /^secret\//;
+												return regex.test(x);
+							});
  
 			// Check all the data received
 			check(pub, {
@@ -362,7 +391,7 @@ Meteor.methods({
 				cost: NonEmptyString,
 				time: NonEmptyString,
 				fbLink: UrlMatch,
-				picPublicId: NonEmptyString,
+				picPublicId: CloudinaryPublicIdMatch,
 				keepPublication: Match.Where(function(x){return Match.test(x, Boolean);})
 			});
 		}	
