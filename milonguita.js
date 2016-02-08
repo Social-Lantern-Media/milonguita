@@ -58,6 +58,9 @@ if (Meteor.isClient) {
 		},
 		showPubInfo: function(){
 			return Session.get('showPubInfo');
+		},
+		isAdmin: function(){
+			return Meteor.user() != null && Meteor.user().profile.admin;
 		}
 	});
 
@@ -159,6 +162,19 @@ if (Meteor.isClient) {
 			check(weekNumber+1, validWeek);
 
 			Session.set('weekNumber', weekNumber+1);
+		},
+		"click .delete-old-pubs": function(event){
+			event.preventDefault();
+
+			// Delete all the old publications.
+			Meteor.call("deleteOldPublications", function(err, res){
+				if (err){
+					console.log(err);
+				}
+
+				console.log(res);
+			});
+
 		}		
 	});
 
@@ -197,14 +213,14 @@ if (Meteor.isClient) {
 			// Check if the value in the input is an image, if it is make the request to Cloudinary.
 			var form_validator = $('.new-publication').validate({
 											rules: {
-												foto: {
+												photo_add: {
 													accept: "image/*",
 													extension: "png|jpe?g|gif"
 												}
 											}
 										});			
 
-			if (form_validator.element("#foto")){
+			if (form_validator.element("#photo_add")){
 				files = e.currentTarget.files;
 	
 				Cloudinary.upload(files,{
@@ -214,7 +230,7 @@ if (Meteor.isClient) {
 							if (err == null){
 								Session.set("pub_pic_id", res.public_id);
 							}else{
-								// show client side validation for the image.
+								// Cloudinary returned error.
 								console.log("not an image!");
 							}
 						}
@@ -255,6 +271,7 @@ if (Meteor.isClient) {
 			event.target.cost.value = "";
 			event.target.time.value = "";
 			event.target.fbLink.value = "";
+			event.target.photo_add.value = "";
 			event.target.keepPublication.checked = false;
 
 			// Hide form
@@ -267,9 +284,42 @@ if (Meteor.isClient) {
 	});
 
 	Template.editPublication.events({
+		"change input[type='file']": function(e){
+			// Check if the value in the input is an image, if it is make the request to Cloudinary.
+			var form_validator = $('.edit-publication').validate({
+											rules: {
+												photo_edit: {
+													accept: "image/*",
+													extension: "png|jpe?g|gif"
+												}
+											}
+										});			
+
+			if (form_validator.element("#photo_edit")){
+				files = e.currentTarget.files;
+	
+				Cloudinary.upload(files,{
+					folder:"secret",
+					resource_type: "image"
+					}, function(err,res){
+							if (err == null){
+								Session.set("pub_pic_id", res.public_id);
+							}else{
+								// Cloudinary returned error.
+								console.log("Not an image!");
+							}
+						}
+				);	
+			}
+		},		
 		"submit .edit-publication": function(event){
 			// Prevent default browser form submit
 			event.preventDefault();
+			
+			// Get pic public_id from Session and delete it
+			var pic_public_id = Session.get("pub_pic_id");
+			Session.set("pub_pic_id", "");
+			delete Session.keys.pub_pic_id;
 
 			// Get values from form element
 			var newPub = { 'name': event.target.name.value,
@@ -280,6 +330,7 @@ if (Meteor.isClient) {
 							'cost': event.target.cost.value,
 							'time': event.target.time.value,
 							'fbLink': event.target.fbLink.value,
+							'picPublicId': pic_public_id,
 		 	};			
 
 			// Update the publication
@@ -294,6 +345,7 @@ if (Meteor.isClient) {
 			event.target.cost.value = "";
 			event.target.time.value = "";
 			event.target.fbLink.value = "";
+			event.target.photo_edit.value = "";
 
 			// Hide form
 			Session.set("showEditPubForm", false);
@@ -315,7 +367,7 @@ if (Meteor.isClient) {
 		// Make client-side validation available
 		$('.new-publication').validate({
 			rules: {
-				foto: {
+				photo_add: {
 					accept: "image/*",
 					extension: "png|jpe?g|gif"
 				}
@@ -339,7 +391,14 @@ if (Meteor.isClient) {
 		$('#edit-datepicker').data("DateTimePicker").date(moment(oldPublication.date).toDate());
 
 		// Make client-side validation available
-		$('.edit-publication').validate();
+		$('.edit-publication').validate({
+			rules: {
+				photo_edit: {
+					accept: "image/*",
+					extension: "png|jpe?g|gif"
+				}
+			}
+		});
 	};
 
 	Accounts.ui.config({
@@ -465,6 +524,13 @@ Meteor.methods({
 
 							 return urlRegex.test(x);
 						  });
+
+			CloudinaryPublicIdMatch = Match.Where(function (x){
+												check(x, String);
+												var regex = /^secret\//;
+												return regex.test(x);
+							});
+ 
  
 			// Check all the data received
 			check(newPub, {
@@ -481,7 +547,8 @@ Meteor.methods({
 						}),
 				cost: NonEmptyString,
 				time: NonEmptyString,
-				fbLink: UrlMatch
+				fbLink: UrlMatch,
+				picPublicId: CloudinaryPublicIdMatch
 			});
 		}	
 
@@ -493,10 +560,23 @@ Meteor.methods({
 														date: new Date(newPub['date']),
 														cost: newPub['cost'],
 														time: newPub['time'],
-														fbLink: newPub['fbLink']
+														fbLink: newPub['fbLink'],
+														picPublicId: newPub['picPublicId']
 													 } 
 											}
 		);
+	},
+	deleteOldPublications: function(){
+		// Check if the user is admin
+		if (Meteor.user() != null && !Meteor.user().profile.admin){
+			throw new Meteor.Error("not-authorized");
+		}
+
+		var yesterday = moment().subtract(1, 'day').endOf('day');
+		var oldPubs = Publications.find({
+							date: { $lt: yesterday.toDate() }
+						  }).fetch();
+		return oldPubs;
 	}
 });
 

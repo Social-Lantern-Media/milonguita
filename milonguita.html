@@ -41,6 +41,14 @@
 				{{> daysOfWeek}}
 			</div>
 		</div>
+		
+		{{#if isAdmin}}
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<button class="delete-old-pubs">Delete old publications</button>
+			</div>
+		</div>
+		{{/if}}
 	</div>
 </body>
 
@@ -115,7 +123,7 @@
 				<input type="checkbox" name="keepPublication"/> Keep Publication.
 			</div>
 			<div class="col-md-12 text-center">
-				<input type="file" id="foto" name="foto" accept="image/*"/>
+				<input type="file" id="photo_add" name="photo_add" accept="image/*"/>
 			</div>
 			<div class="col-md-12">				
 				<input type="submit" value="Add Publication" />
@@ -158,6 +166,9 @@
 				</div>
 				<div class="col-md-12">				
 					<input type="text" name="fbLink" class="required url" value="{{editInfo.fbLink}}" />
+				</div>
+				<div class="col-md-12 text-center">
+					<input type="file" id="photo_edit" name="photo" accept="image/*"/>
 				</div>
 				<div class="col-md-12">				
 					<input type="submit" value="Edit Publication" />
