@@ -1,4 +1,9 @@
+// Collection that hold all the publications.
 Publications = new Mongo.Collection("publications");
+
+// The name of the facebook user that will officiate as Admin.
+// This name should be in an ENV variable, change it!
+var ADMIN_NAME = "Tiago Páez";
 
 // Dont allow users to update their 'profile' value.
 Meteor.users.deny({update: function () { return true; }});
@@ -24,12 +29,6 @@ if (Meteor.isServer){
 						}
 					});
 	});
-
-	// Add a profile object to all the users being created.
-	Accounts.onCreateUser(function(options, user){
-		user.profile = options.profile ? options.profile : { admin: false };
-		return user;
-	}); 
 }
 
 if (Meteor.isClient) {
@@ -60,7 +59,7 @@ if (Meteor.isClient) {
 			return Session.get('showPubInfo');
 		},
 		isAdmin: function(){
-			return Meteor.user() != null && Meteor.user().profile.admin;
+			return Meteor.user() != null && Meteor.user().profile.name == ADMIN_NAME;
 		}
 	});
 
@@ -72,7 +71,7 @@ if (Meteor.isClient) {
 
 	Template.publication.helpers({
 		isOwnerOrAdmin: function(){
-			return (this.owner === Meteor.userId() || (Meteor.user() != null && Meteor.user().profile.admin));
+			return (this.owner === Meteor.userId() || (Meteor.user() != null && Meteor.user().profile.name == ADMIN_NAME));
 		}
 	});
 
@@ -400,10 +399,6 @@ if (Meteor.isClient) {
 			}
 		});
 	};
-
-	Accounts.ui.config({
-    passwordSignupFields: "USERNAME_ONLY"
-  });
 }
 
 Meteor.methods({
@@ -468,7 +463,7 @@ Meteor.methods({
 			picPublicId: pub['picPublicId'],
 			keepPublication: pub['keepPublication'],
 			owner: Meteor.userId(),
-			username: Meteor.user().username
+			username: Meteor.user().profile.name
 		});
 
 		// If the user wants to keep the publication, then add publications for the next month.
@@ -487,7 +482,7 @@ Meteor.methods({
 					fbLink: pub['fbLink'],
 					keepPublication: pub['keepPublication'],
 					owner: Meteor.userId(),
-					username: Meteor.user().username
+					username: Meteor.user().profile.name
 				});
 			};
 		}
@@ -496,7 +491,7 @@ Meteor.methods({
 		var pub = Publications.findOne(pubId);
 		
 		// Make sure only the owner or admin can delete it
-		if (pub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.admin)){
+		if (pub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME)){
 			throw new Meteor.Error("not-authorized");
 		}
 
@@ -506,7 +501,7 @@ Meteor.methods({
 		var oldPub = Publications.findOne(pubId);
 
 		// Make sure only the owner or admin can update it.
-		if (oldPub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.admin)){
+		if (oldPub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME)){
 			throw new Meteor.Error("not-authorized");
 		}
 		
@@ -568,7 +563,7 @@ Meteor.methods({
 	},
 	deleteOldPublications: function(){
 		// Check if the user is admin
-		if (Meteor.user() != null && !Meteor.user().profile.admin){
+		if (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME){
 			throw new Meteor.Error("not-authorized");
 		}
 
@@ -603,17 +598,6 @@ if (Meteor.isClient){
 // Start Up Server
 if (Meteor.isServer) {
   Meteor.startup(function () {
-		// Create admin user on startup.
-		// Since users cant update their profile, they cant become admins.
-		if ( Meteor.users.find().count() === 0 ) {
-			 Accounts.createUser({
-				  username: 'tiago',
-				  email: 'tiago@admin.com',
-				  password: 'thiago',
-				  profile: {
-						admin: true
-				  }
-			 });
-		}
+		
   });
 }
