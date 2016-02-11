@@ -27,7 +27,7 @@ if (Meteor.isServer){
 							$gte:startDate.toDate(),
 							$lt:endDate.toDate()
 						}
-					});
+					}, {sort: {upvoteCount: -1}});
 	});
 }
 
@@ -72,6 +72,15 @@ if (Meteor.isClient) {
 	Template.publication.helpers({
 		isOwnerOrAdmin: function(){
 			return (this.owner === Meteor.userId() || (Meteor.user() != null && Meteor.user().profile.name == ADMIN_NAME));
+		},
+		canUpvote: function(){
+			// This helper checks if this user is already in the list of upvoters for this publication.
+			for (var i = 0; i < this.upvotes.length; i++){
+				if (this.upvotes[i].upvoterId === Meteor.userId()){
+					return false;
+				}
+			}
+			return true;
 		}
 	});
 
@@ -204,6 +213,16 @@ if (Meteor.isClient) {
 
 			Session.set('showPubInfo', true);
 			Session.set('showPubInfoId', this._id);
+		},
+		"click .upvote":function(event){
+			event.preventDefault();
+
+			Meteor.call("upvotePublication", this._id);
+		},
+		"click .cancel-upvote":function(event){
+			event.preventDefault();
+
+			Meteor.call("cancelUpvotePublication", this._id);
 		}
 	});
 
@@ -461,6 +480,8 @@ Meteor.methods({
 			time: pub['time'],
 			fbLink: pub['fbLink'],
 			picPublicId: pub['picPublicId'],
+			upvotes: [],
+			upvoteCount: 0,
 			keepPublication: pub['keepPublication'],
 			owner: Meteor.userId(),
 			username: Meteor.user().profile.name
@@ -480,6 +501,9 @@ Meteor.methods({
 					cost: pub['cost'],
 					time: pub['time'],
 					fbLink: pub['fbLink'],
+					picPublicId: pub['picPublicId'],
+					upvotes: [],
+					upvoteCount: 0,
 					keepPublication: pub['keepPublication'],
 					owner: Meteor.userId(),
 					username: Meteor.user().profile.name
@@ -572,12 +596,45 @@ Meteor.methods({
 							date: { $lt: yesterday.toDate() }
 						  }).fetch();
 		return oldPubs;
+	},
+	upvotePublication: function(pubId){
+		// Check if there is a logged in user.
+		if (Meteor.user() == null){
+			throw new Meteor.Error("not-authorized");
+		}
+
+		// Get the publication
+		var pub = Publications.findOne(pubId);
+
+		// Get the upvoter's id and name
+		var upId = Meteor.userId();
+		var upName = Meteor.user().profile.name;
+
+		// Add the current user to the list of upvoters of this publication.
+		Publications.update({name: pub.name}, {$push: {upvotes: {upvoterId: upId, upvoterName: upName}}, $inc: {upvoteCount: 1}}, {multi: true});
+	},
+	cancelUpvotePublication: function(pubId){
+		// Check if there is a logged in user.
+		if (Meteor.user() == null){
+			throw new Meteor.Error("not-authorized");
+		}
+
+		// Get the publication
+		var pub = Publications.findOne(pubId);
+
+		// Get the upvoter's id and name
+		var upId = Meteor.userId();
+		var upName = Meteor.user().profile.name;
+
+		// Remove the current user from the list of upvoters of this publication.
+		Publications.update({name: pub.name}, {$pull: {upvotes: {upvoterId: upId, upvoterName: upName}}, $inc: {upvoteCount: -1}}, {multi: true});
 	}
 });
 
 // Cloudinary
 if (Meteor.isServer){
 	Cloudinary.config({
+		// Use ENV variables.
 		cloud_name: 'dxrlmnw4s',
 		api_key: '591251777449945',
 		api_secret: 'LZ1m4KZUPXdVZrMfBRD8PgtcesI'});
@@ -598,6 +655,6 @@ if (Meteor.isClient){
 // Start Up Server
 if (Meteor.isServer) {
   Meteor.startup(function () {
-		
+		//ServiceConfiguration.configurations
   });
 }

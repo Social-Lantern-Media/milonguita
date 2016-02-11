@@ -59,7 +59,18 @@
 		<button class="show-edit-pub-form">Edit</button>
     {{/if}}
  
-    <span><strong>{{username}}</strong> - <a class="pub-info" href="#">{{name}}</a></span>
+    <span><strong>{{username}}</strong> - 
+			<a class="pub-info" href="#">{{name}}</a> - 
+			upvotes: {{upvoteCount}}
+	 </span>
+
+	{{#if currentUser }}
+		{{#if canUpvote }}
+			<button class="upvote">Upvote!</button>		
+		{{else}}
+			<button class="cancel-upvote">Cancel Upvote</button>
+		{{/if}}
+	{{/if}}
   </li>
 </template>
 
