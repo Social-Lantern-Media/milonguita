@@ -9,7 +9,7 @@
 			<div class="col-md-12 text-center">
 			  <h1>Welcome to Milonguita!</h1>
 
-				{{> loginButtons}}
+				{{> loginFB}}
 
 				<div class="col-md-12 text-right">
 					{{#if existsPreviousWeek}}
@@ -52,6 +52,15 @@
 	</div>
 </body>
 
+<template name="loginFB">
+	{{#if currentUser}}
+		{{currentUser.services.facebook.name}}
+		<button id="logout">Logout</button>
+	{{else}}
+		<button id="facebook-login" class="btn btn-default">Login with Facebook</button>	
+	{{/if}}
+</template>
+
 <template name="publication">
 	<li>
 	{{#if isOwnerOrAdmin }}
@@ -75,6 +84,7 @@
 </template>
 
 <template name="infoPublication">
+	<button class="close-info-pub">Close</button>
 	<div class="col-md-12">	
 		<p>Name: {{pubInfo.name}}</p>
 		<p>Type: {{pubInfo.type}}</p>
@@ -87,8 +97,11 @@
 		<div class="col-md-4 col-md-offset-4">
 			<img src="{{c.url pubInfo.picPublicId}}" class="img-responsive" />
 		</div>
-		<button class="close-info-pub">Close</button>
 	</div>
+	<div class="row">
+		<p>{{getFBFriendsUpvoted}}</p>
+	</div>	
+	
 </template>
 
 <template name="addPublication">

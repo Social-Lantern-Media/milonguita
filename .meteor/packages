@@ -24,3 +24,5 @@ tsega:bootstrap3-datetimepicker
 momentjs:moment
 lepozepo:cloudinary
 accounts-facebook
+service-configuration
+http

@@ -29,6 +29,13 @@ if (Meteor.isServer){
 						}
 					}, {sort: {upvoteCount: -1}});
 	});
+
+	// This makes the services.facebook fields available on the user object.
+	Meteor.publish('userData', function(){
+		return Meteor.users.find({}, {
+			fields: {'services.facebook': 1}
+		});
+	});
 }
 
 if (Meteor.isClient) {
@@ -40,6 +47,8 @@ if (Meteor.isClient) {
 	// of the handler and the stop() function it uses. 	
 	var subscriptionHandle;
 	subscriptionHandle = Meteor.subscribe("publications", Number(Session.get('weekNumber')));
+
+	Meteor.subscribe("userData");
 	
 	Template.body.helpers({
 		publications: function (){
@@ -66,6 +75,18 @@ if (Meteor.isClient) {
 	Template.infoPublication.helpers({
 		pubInfo: function(){
 			return Publications.findOne(Session.get('showPubInfoId'));
+		},
+		getFBFriendsUpvoted: function(){
+			if (Meteor.user()){
+				Meteor.call("getFBFriends", Session.get('showPubInfoId'), function(err, res){				
+					if (err){
+						console.log({error: err});
+					}else{
+						console.log(res);
+					}
+				});				
+				return "holo";
+			}
 		}
 	});
 
@@ -184,6 +205,25 @@ if (Meteor.isClient) {
 			});
 
 		}		
+	});
+
+	Template.loginFB.events({
+		'click #facebook-login': function(event){
+			event.preventDefault();
+			Meteor.loginWithFacebook({ requestPermissions: ['user_friends'] }, function(err){
+				if (err){
+					throw new Meteor.Error("Facebook Login failed!");
+				}
+			});
+		},
+		'click #logout': function(event){
+			event.preventDefault();
+			Meteor.logout(function(err){
+				if (err){
+					throw new Meteor.Error("Logout failed!");
+				}
+			});
+		}
 	});
 
 	Template.infoPublication.events({
@@ -420,216 +460,265 @@ if (Meteor.isClient) {
 	};
 }
 
-Meteor.methods({
-	addPublication: function(pub){
-		// Make sure the user is logged in before inserting a publication
-		if (! Meteor.userId()){
-			throw new Meteor.Error("not-authorized");
-		}
+if (Meteor.isServer){
+	Meteor.methods({
+		addPublication: function(pub){
+			// Make sure the user is logged in before inserting a publication
+			if (! Meteor.userId()){
+				throw new Meteor.Error("not-authorized");
+			}
 
-		// Server-side validations 
-		if (!this.isSimulation){
-			// Check helpers
-			NonEmptyString = Match.Where(function (x) {
-				check(x, String);
-				return x.length > 0;
-			});
-
-			UrlMatch = Match.Where(function (x) {
-							 check(x, String);
-							 var urlRegex = /^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
-
-							 return urlRegex.test(x);
-						  });
-
-			CloudinaryPublicIdMatch = Match.Where(function (x){
-												check(x, String);
-												var regex = /^secret\//;
-												return regex.test(x);
-							});
- 
-			// Check all the data received
-			check(pub, {
-				name: NonEmptyString,
-				type: Match.Where(function(x){
-							check(x, String);
-							return x === "milonga" || x === "event" || x === "practica";
-						}),
-				description: NonEmptyString,
-				address: NonEmptyString,
-				date: Match.Where(function(x){
-							var y = new Date(x);
-							return Match.test(y, Date) && y >= moment().startOf('day').toDate();
-						}),
-				cost: NonEmptyString,
-				time: NonEmptyString,
-				fbLink: UrlMatch,
-				picPublicId: CloudinaryPublicIdMatch,
-				keepPublication: Match.Where(function(x){return Match.test(x, Boolean);})
-			});
-		}	
-
-		Publications.insert({
-			name: pub['name'],
-			type: pub['type'],
-			createdAt: moment().toDate(),
-			description: pub['description'],
-			address: pub['address'],
-			date: new Date(pub['date']),
-			cost: pub['cost'],
-			time: pub['time'],
-			fbLink: pub['fbLink'],
-			picPublicId: pub['picPublicId'],
-			upvotes: [],
-			upvoteCount: 0,
-			keepPublication: pub['keepPublication'],
-			owner: Meteor.userId(),
-			username: Meteor.user().profile.name
-		});
-
-		// If the user wants to keep the publication, then add publications for the next month.
-		if (pub['keepPublication']){
-			// Insert the publication for the next month.
-			for(var i=1; i<=3; i++){
-				Publications.insert({
-					name: pub['name'],
-					type: pub['type'],
-					createdAt: moment().toDate(),
-					description: pub['description'],
-					address: pub['address'],
-					date: moment(new Date(pub['date'])).add(7*i, 'days').toDate(),
-					cost: pub['cost'],
-					time: pub['time'],
-					fbLink: pub['fbLink'],
-					picPublicId: pub['picPublicId'],
-					upvotes: [],
-					upvoteCount: 0,
-					keepPublication: pub['keepPublication'],
-					owner: Meteor.userId(),
-					username: Meteor.user().profile.name
+			// Server-side validations 
+			if (!this.isSimulation){
+				// Check helpers
+				NonEmptyString = Match.Where(function (x) {
+					check(x, String);
+					return x.length > 0;
 				});
-			};
-		}
-	},
-	deletePublication: function(pubId){
-		var pub = Publications.findOne(pubId);
-		
-		// Make sure only the owner or admin can delete it
-		if (pub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME)){
-			throw new Meteor.Error("not-authorized");
-		}
 
-		Publications.remove(pubId);
-	},
-	updatePublication: function(pubId, newPub){
-		var oldPub = Publications.findOne(pubId);
+				UrlMatch = Match.Where(function (x) {
+								 check(x, String);
+								 var urlRegex = /^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
 
-		// Make sure only the owner or admin can update it.
-		if (oldPub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME)){
-			throw new Meteor.Error("not-authorized");
-		}
-		
-		// Server-side validations 
-		if (!this.isSimulation){
-			// Check helpers
-			NonEmptyString = Match.Where(function (x) {
-				check(x, String);
-				return x.length > 0;
+								 return urlRegex.test(x);
+							  });
+
+				CloudinaryPublicIdMatch = Match.Where(function (x){
+													check(x, String);
+													var regex = /^secret\//;
+													return regex.test(x);
+								});
+	 
+				// Check all the data received
+				check(pub, {
+					name: NonEmptyString,
+					type: Match.Where(function(x){
+								check(x, String);
+								return x === "milonga" || x === "event" || x === "practica";
+							}),
+					description: NonEmptyString,
+					address: NonEmptyString,
+					date: Match.Where(function(x){
+								var y = new Date(x);
+								return Match.test(y, Date) && y >= moment().startOf('day').toDate();
+							}),
+					cost: NonEmptyString,
+					time: NonEmptyString,
+					fbLink: UrlMatch,
+					picPublicId: CloudinaryPublicIdMatch,
+					keepPublication: Match.Where(function(x){return Match.test(x, Boolean);})
+				});
+			}	
+
+			Publications.insert({
+				name: pub['name'],
+				type: pub['type'],
+				createdAt: moment().toDate(),
+				description: pub['description'],
+				address: pub['address'],
+				date: new Date(pub['date']),
+				cost: pub['cost'],
+				time: pub['time'],
+				fbLink: pub['fbLink'],
+				picPublicId: pub['picPublicId'],
+				upvotes: [],
+				upvoteCount: 0,
+				keepPublication: pub['keepPublication'],
+				owner: Meteor.userId(),
+				username: Meteor.user().profile.name
 			});
 
-			UrlMatch = Match.Where(function (x) {
-							 check(x, String);
-							 var urlRegex = /^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
+			// If the user wants to keep the publication, then add publications for the next month.
+			if (pub['keepPublication']){
+				// Insert the publication for the next month.
+				for(var i=1; i<=3; i++){
+					Publications.insert({
+						name: pub['name'],
+						type: pub['type'],
+						createdAt: moment().toDate(),
+						description: pub['description'],
+						address: pub['address'],
+						date: moment(new Date(pub['date'])).add(7*i, 'days').toDate(),
+						cost: pub['cost'],
+						time: pub['time'],
+						fbLink: pub['fbLink'],
+						picPublicId: pub['picPublicId'],
+						upvotes: [],
+						upvoteCount: 0,
+						keepPublication: pub['keepPublication'],
+						owner: Meteor.userId(),
+						username: Meteor.user().profile.name
+					});
+				};
+			}
+		},
+		deletePublication: function(pubId){
+			var pub = Publications.findOne(pubId);
+		
+			// Make sure only the owner or admin can delete it
+			if (pub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME)){
+				throw new Meteor.Error("not-authorized");
+			}
 
-							 return urlRegex.test(x);
-						  });
+			Publications.remove(pubId);
+		},
+		updatePublication: function(pubId, newPub){
+			var oldPub = Publications.findOne(pubId);
 
-			CloudinaryPublicIdMatch = Match.Where(function (x){
-												check(x, String);
-												var regex = /^secret\//;
-												return regex.test(x);
-							});
- 
- 
-			// Check all the data received
-			check(newPub, {
-				name: NonEmptyString,
-				type: Match.Where(function(x){
-							check(x, String);
-							return x === "milonga" || x === "event" || x === "practica";
-						}),
-				description: NonEmptyString,
-				address: NonEmptyString,
-				date: Match.Where(function(x){
-							var y = new Date(x);
-							return Match.test(y, Date) && y >= moment().startOf('day').toDate();
-						}),
-				cost: NonEmptyString,
-				time: NonEmptyString,
-				fbLink: UrlMatch,
-				picPublicId: CloudinaryPublicIdMatch
-			});
-		}	
+			// Make sure only the owner or admin can update it.
+			if (oldPub.owner !== Meteor.userId() && (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME)){
+				throw new Meteor.Error("not-authorized");
+			}
+		
+			// Server-side validations 
+			if (!this.isSimulation){
+				// Check helpers
+				NonEmptyString = Match.Where(function (x) {
+					check(x, String);
+					return x.length > 0;
+				});
+
+				UrlMatch = Match.Where(function (x) {
+								 check(x, String);
+								 var urlRegex = /^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
+
+								 return urlRegex.test(x);
+							  });
+
+				CloudinaryPublicIdMatch = Match.Where(function (x){
+													check(x, String);
+													var regex = /^secret\//;
+													return regex.test(x);
+								});
+	 
+	 
+				// Check all the data received
+				check(newPub, {
+					name: NonEmptyString,
+					type: Match.Where(function(x){
+								check(x, String);
+								return x === "milonga" || x === "event" || x === "practica";
+							}),
+					description: NonEmptyString,
+					address: NonEmptyString,
+					date: Match.Where(function(x){
+								var y = new Date(x);
+								return Match.test(y, Date) && y >= moment().startOf('day').toDate();
+							}),
+					cost: NonEmptyString,
+					time: NonEmptyString,
+					fbLink: UrlMatch,
+					picPublicId: CloudinaryPublicIdMatch
+				});
+			}	
 
 
-		Publications.update(pubId, {$set: { name: newPub['name'],
-														type: newPub['type'],
-														description: newPub['description'],
-														address: newPub['address'],
-														date: new Date(newPub['date']),
-														cost: newPub['cost'],
-														time: newPub['time'],
-														fbLink: newPub['fbLink'],
-														picPublicId: newPub['picPublicId']
-													 } 
-											}
-		);
-	},
-	deleteOldPublications: function(){
-		// Check if the user is admin
-		if (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME){
-			throw new Meteor.Error("not-authorized");
+			Publications.update(pubId, {$set: { name: newPub['name'],
+															type: newPub['type'],
+															description: newPub['description'],
+															address: newPub['address'],
+															date: new Date(newPub['date']),
+															cost: newPub['cost'],
+															time: newPub['time'],
+															fbLink: newPub['fbLink'],
+															picPublicId: newPub['picPublicId']
+														 } 
+												}
+			);
+		},
+		deleteOldPublications: function(){
+			// Check if the user is admin
+			if (Meteor.user() != null && !Meteor.user().profile.name == ADMIN_NAME){
+				throw new Meteor.Error("not-authorized");
+			}
+
+			var yesterday = moment().subtract(1, 'day').endOf('day');
+			var oldPubs = Publications.find({
+								date: { $lt: yesterday.toDate() }
+							  }).fetch();
+			return oldPubs;
+		},
+		upvotePublication: function(pubId){
+			// Check if there is a logged in user.
+			if (Meteor.user() == null){
+				throw new Meteor.Error("not-authorized");
+			}
+
+			// Get the publication
+			var pub = Publications.findOne(pubId);
+
+			// Get the upvoter's id and name
+			var upId = Meteor.userId();
+			var upName = Meteor.user().profile.name;
+
+			// Add the current user to the list of upvoters of this publication.
+			Publications.update({name: pub.name}, {$push: {upvotes: {upvoterId: upId, upvoterName: upName}}, $inc: {upvoteCount: 1}}, {multi: true});
+		},
+		cancelUpvotePublication: function(pubId){
+			// Check if there is a logged in user.
+			if (Meteor.user() == null){
+				throw new Meteor.Error("not-authorized");
+			}
+
+			// Get the publication
+			var pub = Publications.findOne(pubId);
+
+			// Get the upvoter's id and name
+			var upId = Meteor.userId();
+			var upName = Meteor.user().profile.name;
+
+			// Remove the current user from the list of upvoters of this publication.
+			Publications.update({name: pub.name}, {$pull: {upvotes: {upvoterId: upId, upvoterName: upName}}, $inc: {upvoteCount: -1}}, {multi: true});
+		},
+		getFBAccessToken: function(){
+			try{
+				return Meteor.user().services.facebook.accessToken;
+			}catch(e){
+				return null;
+			}
+		},
+		getFBId: function(){
+			try{
+				return Meteor.user().services.facebook.id;
+			}catch(e){
+				return null;
+			}
+		},
+		getFBFriends: function(pubId){
+			this.unblock();
+
+			var apiCall = function(apiUrl, callback){
+				try{
+					var response = HTTP.get(apiUrl).data;
+					callback(null, response);
+				}catch(error){
+					if (error.response){
+						var errorCode = error.response.data.code;
+						var errorMessage = error.response.data.message;
+					}else{
+						var errorCode = 500;
+						var errorMessage = "Cannot access the APIIII";
+					}
+					var myError = new Meteor.Error(errorCode, errorMessage);
+					callback(myError, null);
+				}
+			}
+
+			var apiUrl = 'https://graph.facebook.com/v2.5/me/friends?access_token=' + Meteor.user().services.facebook.accessToken;
+			console.log(apiUrl);			
+
+			var apiCallAsync = Meteor.wrapAsync(apiCall);
+			var response = apiCallAsync(apiUrl);
+			return response;
 		}
+	});
+}
 
-		var yesterday = moment().subtract(1, 'day').endOf('day');
-		var oldPubs = Publications.find({
-							date: { $lt: yesterday.toDate() }
-						  }).fetch();
-		return oldPubs;
-	},
-	upvotePublication: function(pubId){
-		// Check if there is a logged in user.
-		if (Meteor.user() == null){
-			throw new Meteor.Error("not-authorized");
-		}
-
-		// Get the publication
-		var pub = Publications.findOne(pubId);
-
-		// Get the upvoter's id and name
-		var upId = Meteor.userId();
-		var upName = Meteor.user().profile.name;
-
-		// Add the current user to the list of upvoters of this publication.
-		Publications.update({name: pub.name}, {$push: {upvotes: {upvoterId: upId, upvoterName: upName}}, $inc: {upvoteCount: 1}}, {multi: true});
-	},
-	cancelUpvotePublication: function(pubId){
-		// Check if there is a logged in user.
-		if (Meteor.user() == null){
-			throw new Meteor.Error("not-authorized");
-		}
-
-		// Get the publication
-		var pub = Publications.findOne(pubId);
-
-		// Get the upvoter's id and name
-		var upId = Meteor.userId();
-		var upName = Meteor.user().profile.name;
-
-		// Remove the current user from the list of upvoters of this publication.
-		Publications.update({name: pub.name}, {$pull: {upvotes: {upvoterId: upId, upvoterName: upName}}, $inc: {upvoteCount: -1}}, {multi: true});
-	}
-});
+if (Meteor.isServer){
+	Meteor.methods({
+		
+	});
+}
 
 // Cloudinary
 if (Meteor.isServer){
@@ -655,6 +744,16 @@ if (Meteor.isClient){
 // Start Up Server
 if (Meteor.isServer) {
   Meteor.startup(function () {
-		//ServiceConfiguration.configurations
+		ServiceConfiguration.configurations.upsert(
+			{service: "facebook"},
+			{$set: {
+				appId: "1064352450294793",
+				secret: "0a6301cdc0f092e70637675c68bc952f",
+				requestPermissions: ['user_friends']}
+			}
+		);
   });
 }
+
+if (Meteor.isClient){
+	}
