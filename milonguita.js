@@ -531,7 +531,7 @@ if (Meteor.isServer){
 				createdAt: moment.utc().utcOffset("-03:00").toDate(),
 				description: pub['description'],
 				address: pub['address'],
-				date: moment.utc(new Date(pub['date'])).utcOffset("-03:00").toDate(),
+				date: moment.utc(new Date(pub['date'])).endOf('day').toDate(),
 				cost: pub['cost'],
 				time: pub['time'],
 				fbLink: pub['fbLink'],
