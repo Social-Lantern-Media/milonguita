@@ -18,7 +18,7 @@ if (Meteor.isServer){
 		check(weekNumber, validWeek);
 
 		// Only return the publications for the specified week
-		var startDate = moment().utc().utcOffset("-03:00").add(Number(weekNumber)*7, 'days').startOf('day');
+		var startDate = moment.utc().utcOffset("-03:00").add(Number(weekNumber)*7, 'days').startOf('day');
 		var endDate = moment.utc(startDate).utcOffset("-03:00");
 		endDate.add(6, 'days').endOf('day');		
 
@@ -137,13 +137,13 @@ if (Meteor.isClient) {
 
 	Template.daysOfWeek.helpers({
 		nameOfDay: function(numOfDay){
-			return moment().utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('dddd');
+			return moment.utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('dddd');
 		},
 		numberOfDate: function(numOfDay){
-			return moment().utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('D, MMM');
+			return moment.utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('D, MMM');
 		},
 		day: function(numOfDay){
-			var startDate = moment().utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day');
+			var startDate = moment.utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day');
 			var endDate = moment.utc(startDate).utcOffset("-03:00").endOf('day');
 
 			// If a subscription to 'publications' already existed, stop it
@@ -432,7 +432,7 @@ if (Meteor.isClient) {
 								});
 
 		// Select today as minDate
-		$('#add-datepicker').data('DateTimePicker').minDate(moment().utc().utcOffset("-03:00").toDate());
+		$('#add-datepicker').data('DateTimePicker').minDate(moment.utc().utcOffset("-03:00").toDate());
 
 		// Make client-side validation available
 		$('.new-publication').validate({
@@ -453,7 +453,7 @@ if (Meteor.isClient) {
 								});
 
 		// Select today as minDate
-		$('#add-datepicker').data('DateTimePicker').minDate(moment().utc().utcOffset("-03:00").toDate());
+		$('#add-datepicker').data('DateTimePicker').minDate(moment.utc().utcOffset("-03:00").toDate());
 
 		// Get the publication to be edited.
 		var oldPubId = Session.get('showEditPubFormId');
@@ -515,7 +515,7 @@ if (Meteor.isServer){
 					address: NonEmptyString,
 					date: Match.Where(function(x){
 								var y = new Date(x);
-								return Match.test(y, Date) && y >= moment().utc().utcOffset("-03:00").startOf('day').toDate();
+								return Match.test(y, Date) && y >= moment.utc().utcOffset("-03:00").startOf('day').toDate();
 							}),
 					cost: NonEmptyString,
 					time: NonEmptyString,
@@ -528,10 +528,10 @@ if (Meteor.isServer){
 			Publications.insert({
 				name: pub['name'],
 				type: pub['type'],
-				createdAt: moment().utc().utcOffset("-03:00").toDate(),
+				createdAt: moment.utc().utcOffset("-03:00").toDate(),
 				description: pub['description'],
 				address: pub['address'],
-				date: new Date(pub['date']),
+				date: moment.utc(new Date(pub['date'])).utcOffset("-03:00").toDate(),
 				cost: pub['cost'],
 				time: pub['time'],
 				fbLink: pub['fbLink'],
@@ -550,7 +550,7 @@ if (Meteor.isServer){
 					Publications.insert({
 						name: pub['name'],
 						type: pub['type'],
-						createdAt: moment().utc().utcOffset("-03:00").toDate(),
+						createdAt: moment.utc().utcOffset("-03:00").toDate(),
 						description: pub['description'],
 						address: pub['address'],
 						date: moment.utc(new Date(pub['date'])).utcOffset("-03:00").add(7*i, 'days').toDate(),
@@ -618,7 +618,7 @@ if (Meteor.isServer){
 					address: NonEmptyString,
 					date: Match.Where(function(x){
 								var y = new Date(x);
-								return Match.test(y, Date) && y >= moment().utc().utcOffset("-03:00").startOf('day').toDate();
+								return Match.test(y, Date) && y >= moment.utc().utcOffset("-03:00").startOf('day').toDate();
 							}),
 					cost: NonEmptyString,
 					time: NonEmptyString,
@@ -647,7 +647,7 @@ if (Meteor.isServer){
 				throw new Meteor.Error("not-authorized");
 			}
 
-			var yesterday = moment().utc().utcOffset("-03:00").subtract(1, 'day').endOf('day');
+			var yesterday = moment.utc().utcOffset("-03:00").subtract(1, 'day').endOf('day');
 			var oldPubs = Publications.find({
 								date: { $lt: yesterday.toDate() }
 							  }).fetch();
