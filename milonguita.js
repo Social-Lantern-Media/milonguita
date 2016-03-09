@@ -18,8 +18,8 @@ if (Meteor.isServer){
 		check(weekNumber, validWeek);
 
 		// Only return the publications for the specified week
-		var startDate = moment().add(Number(weekNumber)*7, 'days').startOf('day');
-		var endDate = moment(startDate);
+		var startDate = moment().utc().utcOffset("-03:00").add(Number(weekNumber)*7, 'days').startOf('day');
+		var endDate = moment.utc(startDate).utcOffset("-03:00");
 		endDate.add(6, 'days').endOf('day');		
 
 		return Publications.find({
@@ -76,17 +76,14 @@ if (Meteor.isClient) {
 		pubInfo: function(){
 			return Publications.findOne(Session.get('showPubInfoId'));
 		},
+		isEmptyFBFriendsUpvoted: function(){
+			return Session.get("profile_pics") == undefined;
+		},
+		numFBFriendsUpvoted: function(){
+			return Session.get("num_profile_pics");
+		},
 		getFBFriendsUpvoted: function(){
-			if (Meteor.user()){
-				Meteor.call("getFBFriends", Session.get('showPubInfoId'), function(err, res){				
-					if (err){
-						console.log({error: err});
-					}else{
-						console.log(res);
-					}
-				});				
-				return "holo";
-			}
+			return Session.get("profile_pics");
 		}
 	});
 
@@ -140,14 +137,14 @@ if (Meteor.isClient) {
 
 	Template.daysOfWeek.helpers({
 		nameOfDay: function(numOfDay){
-			return moment().add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('dddd');
+			return moment().utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('dddd');
 		},
 		numberOfDate: function(numOfDay){
-			return moment().add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('D, MMM');
+			return moment().utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('D, MMM');
 		},
 		day: function(numOfDay){
-			var startDate = moment().add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day');
-			var endDate = moment(startDate).endOf('day');
+			var startDate = moment().utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day');
+			var endDate = moment.utc(startDate).utcOffset("-03:00").endOf('day');
 
 			// If a subscription to 'publications' already existed, stop it
 			if (subscriptionHandle){
@@ -210,7 +207,7 @@ if (Meteor.isClient) {
 	Template.loginFB.events({
 		'click #facebook-login': function(event){
 			event.preventDefault();
-			Meteor.loginWithFacebook({ requestPermissions: ['user_friends'] }, function(err){
+			Meteor.loginWithFacebook({ requestPermissions: ['public_profile', 'user_friends'] }, function(err){
 				if (err){
 					throw new Meteor.Error("Facebook Login failed!");
 				}
@@ -232,6 +229,9 @@ if (Meteor.isClient) {
 
 			Session.set('showPubInfo', false);
 			Session.set('showPubInfoId', '');
+
+			delete Session.keys.profile_pics;
+			delete Session.keys.num_profile_pics;
 		}
 	});
 
@@ -253,6 +253,17 @@ if (Meteor.isClient) {
 
 			Session.set('showPubInfo', true);
 			Session.set('showPubInfoId', this._id);
+
+			if (Meteor.user()){
+				Meteor.call("getFBFriends", Session.get('showPubInfoId'), function(err, res){				
+					if (err){
+						console.log({error: err});
+					}else{
+						Session.set("profile_pics", res);
+						Session.set("num_profile_pics", res.length);
+					}
+				});				
+			}
 		},
 		"click .upvote":function(event){
 			event.preventDefault();
@@ -407,6 +418,7 @@ if (Meteor.isClient) {
 
 			// Hide form
 			Session.set("showEditPubForm", false);
+			Session.set("showEditPubFormId", '');
 		}
 	});
 
@@ -420,7 +432,7 @@ if (Meteor.isClient) {
 								});
 
 		// Select today as minDate
-		$('#add-datepicker').data('DateTimePicker').minDate(moment().toDate());
+		$('#add-datepicker').data('DateTimePicker').minDate(moment().utc().utcOffset("-03:00").toDate());
 
 		// Make client-side validation available
 		$('.new-publication').validate({
@@ -441,12 +453,15 @@ if (Meteor.isClient) {
 								});
 
 		// Select today as minDate
-		$('#add-datepicker').data('DateTimePicker').minDate(moment().toDate());
+		$('#add-datepicker').data('DateTimePicker').minDate(moment().utc().utcOffset("-03:00").toDate());
 
-		// Get the publication to be edited, and put the date in the datepicker
+		// Get the publication to be edited.
 		var oldPubId = Session.get('showEditPubFormId');
 		var oldPublication = Publications.findOne({ _id: oldPubId }); 
-		$('#edit-datepicker').data("DateTimePicker").date(moment(oldPublication.date).toDate());
+		// Put the date in the date picker.
+		$('#edit-datepicker').data("DateTimePicker").date(moment.utc(oldPublication.date).utcOffset("-03:00").toDate());
+		// Put the current image in the Session variable
+		Session.set("pub_pic_id", oldPublication.picPublicId);
 
 		// Make client-side validation available
 		$('.edit-publication').validate({
@@ -500,7 +515,7 @@ if (Meteor.isServer){
 					address: NonEmptyString,
 					date: Match.Where(function(x){
 								var y = new Date(x);
-								return Match.test(y, Date) && y >= moment().startOf('day').toDate();
+								return Match.test(y, Date) && y >= moment().utc().utcOffset("-03:00").startOf('day').toDate();
 							}),
 					cost: NonEmptyString,
 					time: NonEmptyString,
@@ -513,7 +528,7 @@ if (Meteor.isServer){
 			Publications.insert({
 				name: pub['name'],
 				type: pub['type'],
-				createdAt: moment().toDate(),
+				createdAt: moment().utc().utcOffset("-03:00").toDate(),
 				description: pub['description'],
 				address: pub['address'],
 				date: new Date(pub['date']),
@@ -535,10 +550,10 @@ if (Meteor.isServer){
 					Publications.insert({
 						name: pub['name'],
 						type: pub['type'],
-						createdAt: moment().toDate(),
+						createdAt: moment().utc().utcOffset("-03:00").toDate(),
 						description: pub['description'],
 						address: pub['address'],
-						date: moment(new Date(pub['date'])).add(7*i, 'days').toDate(),
+						date: moment.utc(new Date(pub['date'])).utcOffset("-03:00").add(7*i, 'days').toDate(),
 						cost: pub['cost'],
 						time: pub['time'],
 						fbLink: pub['fbLink'],
@@ -603,7 +618,7 @@ if (Meteor.isServer){
 					address: NonEmptyString,
 					date: Match.Where(function(x){
 								var y = new Date(x);
-								return Match.test(y, Date) && y >= moment().startOf('day').toDate();
+								return Match.test(y, Date) && y >= moment().utc().utcOffset("-03:00").startOf('day').toDate();
 							}),
 					cost: NonEmptyString,
 					time: NonEmptyString,
@@ -632,7 +647,7 @@ if (Meteor.isServer){
 				throw new Meteor.Error("not-authorized");
 			}
 
-			var yesterday = moment().subtract(1, 'day').endOf('day');
+			var yesterday = moment().utc().utcOffset("-03:00").subtract(1, 'day').endOf('day');
 			var oldPubs = Publications.find({
 								date: { $lt: yesterday.toDate() }
 							  }).fetch();
@@ -677,13 +692,6 @@ if (Meteor.isServer){
 				return null;
 			}
 		},
-		getFBId: function(){
-			try{
-				return Meteor.user().services.facebook.id;
-			}catch(e){
-				return null;
-			}
-		},
 		getFBFriends: function(pubId){
 			this.unblock();
 
@@ -704,19 +712,42 @@ if (Meteor.isServer){
 				}
 			}
 
+			// Get the current user friend list.
 			var apiUrl = 'https://graph.facebook.com/v2.5/me/friends?access_token=' + Meteor.user().services.facebook.accessToken;
 			console.log(apiUrl);			
 
 			var apiCallAsync = Meteor.wrapAsync(apiCall);
 			var response = apiCallAsync(apiUrl);
-			return response;
-		}
-	});
-}
+			
+			var intersection = [];
+			if (response){
+				// Get all the upvotes.
+				var pub = Publications.findOne(pubId);
+				var upvotes = pub.upvotes;
+				for (i = 0; i < upvotes.length; i++){
+					var user = Meteor.users.findOne(upvotes[i].upvoterId);
+					for (j = 0; j < response.data.length; j++){
+						if (user.services.facebook.id == response.data[j].id){
+							intersection.push(user);
+						}
+					}
+				}
+			}
 
-if (Meteor.isServer){
-	Meteor.methods({
-		
+			// intersection has now the users that are friends of the current user and upvoted this pub.
+			// For every user in intersection, get the url of its profile pic.
+			var profile_pics = [];
+			for (i = 0; i < intersection.length; i++){
+							var profilePicApiUrl = 'https://graph.facebook.com/v2.5/me/picture?redirect=false&access_token='+ intersection[i].services.facebook.accessToken;
+							var profile_pic_res = apiCallAsync(profilePicApiUrl);
+							profile_pics.push({
+														url:profile_pic_res.data.url,
+														name: intersection[i].services.facebook.name
+													});
+			}
+			
+			return profile_pics;
+		}
 	});
 }
 

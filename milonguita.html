@@ -99,9 +99,15 @@
 		</div>
 	</div>
 	<div class="row">
-		<p>{{getFBFriendsUpvoted}}</p>
-	</div>	
-	
+		<div class="col-md-12">
+			{{#unless isEmptyFBFriendsUpvoted}}
+				<p>{{numFBFriendsUpvoted}} of your friends upvoted this publication.</p>
+			{{/unless}}
+			{{#each getFBFriendsUpvoted}}
+				<img src="{{url}}" title="{{name}}"/>
+			{{/each}}
+		</div>
+	</div>
 </template>
 
 <template name="addPublication">

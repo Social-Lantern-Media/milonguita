@@ -21,8 +21,8 @@ twbs:bootstrap
 themeteorchef:jquery-validation
 check
 tsega:bootstrap3-datetimepicker
-momentjs:moment
 lepozepo:cloudinary
 accounts-facebook
 service-configuration
 http
+momentjs:moment
