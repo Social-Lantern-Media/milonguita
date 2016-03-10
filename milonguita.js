@@ -195,10 +195,14 @@ if (Meteor.isClient) {
 			// Delete all the old publications.
 			Meteor.call("deleteOldPublications", function(err, res){
 				if (err){
+					console.log("There was an error while trying to delete old publications.");
 					console.log(err);
 				}
 
-				console.log(res);
+				console.log(res.length + " publications deleted: ");
+				if (res.length != 0){	
+					console.log(res);
+				}
 			});
 
 		}		
@@ -656,7 +660,15 @@ if (Meteor.isServer){
 			var oldPubs = Publications.find({
 								date: { $lt: yesterday.toDate() }
 							  }).fetch();
-			return oldPubs;
+
+			var nameOldPubs = [];
+			// Delete all the old publications and save their names.
+			for (i = 0; i < oldPubs.length; i++){
+				nameOldPubs.push(oldPubs[i].name);
+				Publications.remove(oldPubs[i]._id);
+			}
+
+			return nameOldPubs;
 		},
 		upvotePublication: function(pubId){
 			// Check if there is a logged in user.
