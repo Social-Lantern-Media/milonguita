@@ -315,12 +315,16 @@ if (Meteor.isClient) {
 			Session.set("pub_pic_id", "");
 			delete Session.keys.pub_pic_id;
 
+			// Create Date object
+			var datePub = new Date(event.target.date.value);
+			console.log(datePub);
+
 			// Get values from form element
 			var pub = { 'name': event.target.name.value,
 							'type': event.target.type.value,
 							'description': event.target.description.value,
 							'address': event.target.address.value,
-							'date': event.target.date.value,
+							'date': datePub,
 							'cost': event.target.cost.value,
 							'time': event.target.time.value,
 							'fbLink': event.target.fbLink.value,
@@ -390,12 +394,15 @@ if (Meteor.isClient) {
 			Session.set("pub_pic_id", "");
 			delete Session.keys.pub_pic_id;
 
+			// Create Date object
+			var datePub = new Date(event.target.date.value);
+
 			// Get values from form element
 			var newPub = { 'name': event.target.name.value,
 							'type': event.target.type.value,
 							'description': event.target.description.value,
 							'address': event.target.address.value,
-							'date': event.target.date.value,
+							'date': datePub,
 							'cost': event.target.cost.value,
 							'time': event.target.time.value,
 							'fbLink': event.target.fbLink.value,
@@ -514,8 +521,7 @@ if (Meteor.isServer){
 					description: NonEmptyString,
 					address: NonEmptyString,
 					date: Match.Where(function(x){
-								var y = new Date(x);
-								return Match.test(y, Date) && y >= moment.utc().utcOffset("-03:00").startOf('day').toDate();
+								return Match.test(x, Date) && moment(x) >= moment.utc().utcOffset("-03:00").startOf('day');
 							}),
 					cost: NonEmptyString,
 					time: NonEmptyString,
@@ -531,7 +537,7 @@ if (Meteor.isServer){
 				createdAt: moment.utc().utcOffset("-03:00").toDate(),
 				description: pub['description'],
 				address: pub['address'],
-				date: moment.utc(new Date(pub['date'])).endOf('day').toDate(),
+				date: pub['date'],
 				cost: pub['cost'],
 				time: pub['time'],
 				fbLink: pub['fbLink'],
@@ -553,7 +559,7 @@ if (Meteor.isServer){
 						createdAt: moment.utc().utcOffset("-03:00").toDate(),
 						description: pub['description'],
 						address: pub['address'],
-						date: moment.utc(new Date(pub['date'])).utcOffset("-03:00").add(7*i, 'days').toDate(),
+						date: moment(pub['date']).add(7*i, 'days').toDate(),
 						cost: pub['cost'],
 						time: pub['time'],
 						fbLink: pub['fbLink'],
@@ -617,8 +623,7 @@ if (Meteor.isServer){
 					description: NonEmptyString,
 					address: NonEmptyString,
 					date: Match.Where(function(x){
-								var y = new Date(x);
-								return Match.test(y, Date) && y >= moment.utc().utcOffset("-03:00").startOf('day').toDate();
+								return Match.test(x, Date) && moment(x) >= moment.utc().utcOffset("-03:00").startOf('day');
 							}),
 					cost: NonEmptyString,
 					time: NonEmptyString,
@@ -632,7 +637,7 @@ if (Meteor.isServer){
 															type: newPub['type'],
 															description: newPub['description'],
 															address: newPub['address'],
-															date: new Date(newPub['date']),
+															date: newPub['date'],
 															cost: newPub['cost'],
 															time: newPub['time'],
 															fbLink: newPub['fbLink'],
