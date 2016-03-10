@@ -665,6 +665,29 @@ if (Meteor.isServer){
 			// Delete all the old publications and save their names.
 			for (i = 0; i < oldPubs.length; i++){
 				nameOldPubs.push(oldPubs[i].name);
+			
+				// Before removing the publication, check if it's a pub that is marked to be kept.
+				// If it is, create a new pub with the same info, in a month from now.
+				if (oldPubs[i].keepPublication){
+					Publications.insert({
+						name: OldPubs[i].name,
+						type: OldPubs[i].type,
+						createdAt: moment.utc().utcOffset("-03:00").toDate(),
+						description: OldPubs[i].description,
+						address: OldPubs[i].address,
+						date: moment(OldPubs[i].date).add(7*4, 'days').toDate(),
+						cost: OldPubs[i].cost,
+						time: OldPubs[i].time,
+						fbLink: OldPubs[i].fbLink,
+						picPublicId: OldPubs[i].picPublicId,
+						upvotes: OldPubs[i].upvotes,
+						upvoteCount: OldPubs[i].upvoteCount,
+						keepPublication: OldPubs[i].keepPublication,
+						owner: OldPubs[i].owner,
+						username: OldPubs[i].username
+					});
+				}				
+
 				Publications.remove(oldPubs[i]._id);
 			}
 
