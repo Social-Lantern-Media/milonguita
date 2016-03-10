@@ -26,3 +26,4 @@ accounts-facebook
 service-configuration
 http
 momentjs:moment
+percolate:synced-cron

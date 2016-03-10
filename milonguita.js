@@ -768,6 +768,23 @@ if (Meteor.isServer){
 	});
 }
 
+// Sychronized job to delete old publications (runs once a week).
+if (Meteor.isServer){
+	SyncedCron.add({
+		name: 'Delete old publications.',
+		schedule: function(parser){
+			return parser.text('on the first day of the week');
+		},
+		job: function(){
+			var pubsDeleted = deleteOldPublications();
+			return pubsDeleted.length + " publications deleted.";
+		}
+	});
+	
+	// Start the synced job.
+	SyncedCron.start();
+}
+
 // Cloudinary
 if (Meteor.isServer){
 	Cloudinary.config({
