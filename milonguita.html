@@ -20,16 +20,16 @@
 						{{#if showPubForm }}
 							<button class="show-pub-form btn btn-default">Close</button>	
 						{{else}}
-							<button class="show-pub-form btn btn-default">Add a new Publication</button>
+							<button class="show-pub-form btn btn-default">Add a new Publication <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
 						{{/if}}
 					{{/if}}
 				</div>
 				<div class="col-md-6">
 					{{#if existsPreviousWeek}}
-					   <button class="previous-week btn btn-default">Previous Week</button>
+					   <button class="previous-week btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Previous Week</button>
 					{{/if}}
 					{{#if existsNextWeek}}
-					   <button class="next-week btn btn-default">Next Week</button>
+					   <button class="next-week btn btn-default">Next Week <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 					{{/if}}
 				</div>
 			</div>
@@ -51,7 +51,9 @@
 		</div>
 		
 		{{#if showPubInfo}}
-			{{> infoPublication}}		
+			<div class="row info">
+				{{> infoPublication}}
+			</div>
 		{{/if}}
 	
 		<div class="row">
@@ -74,24 +76,24 @@
 	{{#if currentUser}}
 		<p>
 			{{currentUser.services.facebook.name}}
-			<button id="logout" class="btn btn-default">Logout</button>
+			<button id="logout" class="btn btn-default">Salir</button>
 		</p>
 	{{else}}
-		<p><button id="facebook-login" class="btn btn-default">Login with Facebook</button></p>	
+		<p><button id="facebook-login" class="btn btn-default">Ingresar con Facebook</button></p>	
 	{{/if}}
 </template>
 
 <template name="publication">
 	<div class="col-md-4">
 		<div class="col-md-12 box">
-		<div class="col-md-12 text-center">
+		<div class="col-md-12 text-center" style="margin-bottom:5px;">
 			<h4>{{name}}</h4>
 		</div>
 		<div class="col-md-6 col-md-offset-3">
 			<img src="{{c.url picPublicId height=150 width=150 crop='fill'}}" class="img-responsive img-circle"/>			
 		</div>
 		<div class="col-md-12 text-left">
-			<p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{type}}</p>
+			<p><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> <span class="text-capitalize">{{type}}</span></p>
 			<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Comienza: {{time}}</p>
 			<p><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> Recomendada: {{upvoteCount}} {{#if pluralUpvoteCount}}veces{{else}}vez{{/if}}</p>
 		</div>
@@ -107,8 +109,8 @@
 				<button class="pub-info btn btn-default">Ver mas</button>
 			</p>
 			{{#if isOwnerOrAdmin }}
-				<button class="delete">&times;</button>
-				<button class="show-edit-pub-form">Edit</button>
+				<button class="btn btn-default delete">Eliminar <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+				<button class="btn btn-default show-edit-pub-form">Editar <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
     		{{/if}}
 		</div>
 		</div>
@@ -117,35 +119,62 @@
 </template>
 
 <template name="infoPublication">
-	<button class="close-info-pub">Close</button>
-	<div class="col-md-12">	
-		<p>Name: {{pubInfo.name}}</p>
-		<p>Type: {{pubInfo.type}}</p>
-		<p>Description: {{pubInfo.description}}</p>
-		<p>Address: {{pubInfo.address}}</p>
-		<p>Date: {{pubInfo.date}}</p>
-		<p>Cost: {{pubInfo.cost}}</p>
-		<p>Time: {{pubInfo.time}}</p>
-		<p>Facebook: {{pubInfo.fbLink}}</p>
-		<div class="col-md-4 col-md-offset-4">
-			<img src="{{c.url pubInfo.picPublicId}}" class="img-responsive" />
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			{{#unless isEmptyFBFriendsUpvoted}}
-				<p>{{numFBFriendsUpvoted}} of your friends upvoted this publication.</p>
-			{{/unless}}
-			{{#each getFBFriendsUpvoted}}
-				<img src="{{url}}" title="{{name}}"/>
-			{{/each}}
+	<div class="col-md-12 info-margin">	
+		<div class="col-md-12">		
+			<div class="col-md-4">
+				<img src="{{c.url pubInfo.picPublicId}}" class="img-responsive" />
+			</div>
+			<div class="col-md-7 col-md-offset-1">
+				<div class="col-md-12">
+					<div class="col-md-10">
+						<h2 style="margin-top:0;">{{pubInfo.name}}</h2>
+					</div>
+					<div class="col-md-2">
+						<button class="close-info-pub btn btn-default pull-right">Cerrar</button>
+					</div>
+				</div>
+				<div class="col-md-12" style="margin-top:10px;">
+					<p>Tipo de publicacion: {{pubInfo.type}}</p>
+					<p>Publicacion creada por {{pubInfo.username}}</p>
+					<p>Direccion: {{pubInfo.address}}</p>
+					<p>Fecha: {{pubInfo.date}}</p>
+					<p>Costo: {{pubInfo.cost}}</p>
+					<p>Hora: {{pubInfo.time}}</p>
+					<p>Facebook: {{pubInfo.fbLink}}</p>
+					<p>Recomendado por {{pubInfo.upvoteCount}} usuarios de milonguita</p>
+				</div>
+				<div class="col-md-12" style="margin-top:20px;">
+					{{#unless isEmptyFBFriendsUpvoted}}
+						<p>{{numFBFriendsUpvoted}} of your friends upvoted this publication.</p>
+					{{/unless}}
+					{{#each getFBFriendsUpvoted}}
+							<img src="{{url}}" title="{{name}}"/>
+					{{/each}}
+				</div>
+			</div>
+			<div class="col-md-12 text-center" style="margin-top:10px;">
+				<div class="col-md-4">
+					<h4>Descripcion: </h4>
+					<div class="col-md-12 text-left">
+						<p>{{pubInfo.description}}</p>
+					</div>
+				</div>
+				<div class="col-md-8">
+					<h4>Mapa:</h4>
+					<div class="col-md-12">
+						<div class="col-md-10 col-md-offset-1">
+							<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.7242004602595!2d-122.48044378471664!3d37.81992857975122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808586deffffffc3%3A0xcded139783705509!2sGolden+Gate+Bridge!5e0!3m2!1sen!2sus!4v1457746766331" width="400" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
 
 <template name="addPublication">
 	<div class="col-md-12 {{#unless showPubForm }}hide{{/unless}}">
-		<h2>Add a new Publication</h2>
+		<h2>Agregar una nueva publicacion</h2>
 		<form class="new-publication">
 			<div class="col-md-12">				
 				<input type="text" name="name" class="required" placeholder="name" />

@@ -15,7 +15,7 @@
 }
 
 .box{
-	border: 1px solid #eee;
+	border: 1px solid rgb(214, 214, 214);
 }
 
 .day-grid{
@@ -25,4 +25,12 @@
 .cancel-upvote{
 	color: blue;
 	border-color:blue;
+}
+
+.info{
+	border: 1px solid #eee;
+}
+
+.info-margin{
+	margin: 10px;
 }
