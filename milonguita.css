@@ -1,1 +1,28 @@
-/* CSS declarations go here */
+.login{
+	margin-top:25px;
+}
+
+#header{
+	border-bottom:1px solid #eee;
+}
+
+.controls{
+	margin-top:25px;
+}
+
+.day{
+	border-bottom: 1px solid black;
+}
+
+.box{
+	border: 1px solid #eee;
+}
+
+.day-grid{
+	margin: 10px 0;
+}
+
+.cancel-upvote{
+	color: blue;
+	border-color:blue;
+}

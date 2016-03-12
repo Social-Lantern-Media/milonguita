@@ -55,6 +55,9 @@ if (Meteor.isClient) {
 			// Show newest publications at the top
 			return Publications.find({}, {sort: {createdAt: -1}});
 		},
+		showPubForm: function(){
+			return Session.get("showPubForm");
+		},
 		showEditPubForm: function (){
 			return Session.get('showEditPubForm');
 		},
@@ -99,6 +102,9 @@ if (Meteor.isClient) {
 				}
 			}
 			return true;
+		},
+		pluralUpvoteCount: function(){
+			return this.upvoteCount != 1;
 		}
 	});
 
@@ -205,6 +211,9 @@ if (Meteor.isClient) {
 				}
 			});
 
+		},
+		"click .show-pub-form": function(event){
+			Session.get("showPubForm") ? Session.set("showPubForm", false) : Session.set("showPubForm", true);
 		}		
 	});
 
@@ -354,9 +363,6 @@ if (Meteor.isClient) {
 			// Hide form
 			Session.set("showPubForm", false);
 
-		},
-		"click .show-pub-form": function(event){
-			Session.get("showPubForm") ? Session.set("showPubForm", false) : Session.set("showPubForm", true);
 		}
 	});
 

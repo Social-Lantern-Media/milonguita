@@ -4,24 +4,42 @@
 </head>
 
 <body>
+	<header id="header">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 text-left"><h1>Milonguita!</h1></div>
+				<div class="col-md-8 text-right login">{{> loginFB}}</div>
+			</div>
+		</div>
+	</header>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 text-center controls">
+				<div class="col-md-6">
+					{{#if currentUser}}		
+						{{#if showPubForm }}
+							<button class="show-pub-form btn btn-default">Close</button>	
+						{{else}}
+							<button class="show-pub-form btn btn-default">Add a new Publication</button>
+						{{/if}}
+					{{/if}}
+				</div>
+				<div class="col-md-6">
+					{{#if existsPreviousWeek}}
+					   <button class="previous-week btn btn-default">Previous Week</button>
+					{{/if}}
+					{{#if existsNextWeek}}
+					   <button class="next-week btn btn-default">Next Week</button>
+					{{/if}}
+				</div>
+			</div>
+		</div>
+	</div>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12 text-center">
-			  <h1>Welcome to Milonguita!</h1>
-
-				{{> loginFB}}
-
-				<div class="col-md-12 text-right">
-					{{#if existsPreviousWeek}}
-					   <button class="previous-week">Previous Week</button>
-					{{/if}}
-					{{#if existsNextWeek}}
-					   <button class="next-week">Next Week</button>
-					{{/if}}
-				</div>
-
 				{{#if currentUser}}
-
+			
 					{{> addPublication}}
 
 					{{#if showEditPubForm}}
@@ -37,7 +55,7 @@
 		{{/if}}
 	
 		<div class="row">
-			<div class="col-md-12 text-center">
+			<div class="col-md-12 text-left">
 				{{> daysOfWeek}}
 			</div>
 		</div>
@@ -54,33 +72,48 @@
 
 <template name="loginFB">
 	{{#if currentUser}}
-		{{currentUser.services.facebook.name}}
-		<button id="logout">Logout</button>
+		<p>
+			{{currentUser.services.facebook.name}}
+			<button id="logout" class="btn btn-default">Logout</button>
+		</p>
 	{{else}}
-		<button id="facebook-login" class="btn btn-default">Login with Facebook</button>	
+		<p><button id="facebook-login" class="btn btn-default">Login with Facebook</button></p>	
 	{{/if}}
 </template>
 
 <template name="publication">
-	<li>
-	{{#if isOwnerOrAdmin }}
-      <button class="delete">&times;</button>
-		<button class="show-edit-pub-form">Edit</button>
-    {{/if}}
- 
-    <span><strong>{{username}}</strong> - 
-			<a class="pub-info" href="#">{{name}}</a> - 
-			upvotes: {{upvoteCount}}
-	 </span>
-
-	{{#if currentUser }}
-		{{#if canUpvote }}
-			<button class="upvote">Upvote!</button>		
-		{{else}}
-			<button class="cancel-upvote">Cancel Upvote</button>
-		{{/if}}
-	{{/if}}
-  </li>
+	<div class="col-md-4">
+		<div class="col-md-12 box">
+		<div class="col-md-12 text-center">
+			<h4>{{name}}</h4>
+		</div>
+		<div class="col-md-6 col-md-offset-3">
+			<img src="{{c.url picPublicId height=150 width=150 crop='fill'}}" class="img-responsive img-circle"/>			
+		</div>
+		<div class="col-md-12 text-left">
+			<p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{type}}</p>
+			<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Comienza: {{time}}</p>
+			<p><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> Recomendada: {{upvoteCount}} {{#if pluralUpvoteCount}}veces{{else}}vez{{/if}}</p>
+		</div>
+		<div class="col-md-12 text-center" style="margin-top:5px;">
+			<p>
+				{{#if currentUser}}
+					{{#if canUpvote}}
+						<button class="btn btn-default upvote">Recomendar <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>
+					{{else}}
+						<button class="btn btn-default cancel-upvote">Recomendada <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+					{{/if}}
+				{{/if}}
+				<button class="pub-info btn btn-default">Ver mas</button>
+			</p>
+			{{#if isOwnerOrAdmin }}
+				<button class="delete">&times;</button>
+				<button class="show-edit-pub-form">Edit</button>
+    		{{/if}}
+		</div>
+		</div>
+	</div>
+	
 </template>
 
 <template name="infoPublication">
@@ -111,15 +144,8 @@
 </template>
 
 <template name="addPublication">
-	<div class="col-md-12">
-		{{#if showPubForm }}
-		   <button class="show-pub-form">Close</button>	
-		{{else}}
-		   <button class="show-pub-form">Add a new Publication</button>
-		{{/if}}
-	</div>
-
-	<div class="col-md-8 col-md-offset-2 {{#unless showPubForm }}hide{{/unless}}">
+	<div class="col-md-12 {{#unless showPubForm }}hide{{/unless}}">
+		<h2>Add a new Publication</h2>
 		<form class="new-publication">
 			<div class="col-md-12">				
 				<input type="text" name="name" class="required" placeholder="name" />
@@ -208,38 +234,66 @@
 </template>
 
 <template name="daysOfWeek">
-	<h4>{{nameOfDay 0}} ({{numberOfDate 0}})</h4>
+	<div class="col-md-12 day">
+		<h4>{{nameOfDay 0}} ({{numberOfDate 0}})</h4>
+	</div>
+	<div class="col-md-12 day-grid">
 	{{# each day 0}}
 		{{> publication}}
 	{{/each}}
+	</div>
 
-	<h4>{{nameOfDay 1}} ({{numberOfDate 1}})</h4>
+	<div class="col-md-12 day">
+		<h4>{{nameOfDay 1}} ({{numberOfDate 1}})</h4>
+	</div>
+	<div class="col-md-12 day-grid">
 	{{# each day 1}}
 		{{> publication}}
 	{{/each}}
+	</div>
 
-	<h4>{{nameOfDay 2}} ({{numberOfDate 2}})</h4>
+	<div class="col-md-12 day">
+		<h4>{{nameOfDay 2}} ({{numberOfDate 2}})</h4>
+	</div>
+	<div class="col-md-12 day-grid">
 	{{#each day 2}}
 		{{> publication}}
 	{{/each}}
+	</div>
 
-	<h4>{{nameOfDay 3}} ({{numberOfDate 3}})</h4>
+	<div class="col-md-12 day">
+		<h4>{{nameOfDay 3}} ({{numberOfDate 3}})</h4>
+	</div>
+	<div class="col-md-12 day-grid">
 	{{#each day 3}}
 		{{> publication}}
 	{{/each}}
+	</div>
 
-	<h4>{{nameOfDay 4}} ({{numberOfDate 4}})</h4>
+	<div class="col-md-12 day">
+		<h4>{{nameOfDay 4}} ({{numberOfDate 4}})</h4>
+	</div>
+	<div class="col-md-12 day-grid">
 	{{#each day 4}}
 		{{> publication}}
 	{{/each}}
+	</div>
 
-	<h4>{{nameOfDay 5}} ({{numberOfDate 5}})</h4>
+	<div class="col-md-12 day">
+		<h4>{{nameOfDay 5}} ({{numberOfDate 5}})</h4>
+	</div>
+	<div class="col-md-12 day-grid">
 	{{#each day 5}}
 		{{> publication}}
 	{{/each}}
+	</div>
 
-	<h4>{{nameOfDay 6}} ({{numberOfDate 6}})</h4>
+	<div class="col-md-12 day">
+		<h4>{{nameOfDay 6}} ({{numberOfDate 6}})</h4>
+	</div>
+	<div class="col-md-12 day-grid">
 	{{#each day 6}}
 		{{> publication}}
 	{{/each}}
+	</div>
 </template>
