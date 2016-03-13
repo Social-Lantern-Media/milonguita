@@ -27,6 +27,14 @@
 	border-color:blue;
 }
 
+.add {
+	border: 1px solid #eee;
+}
+
+.edit{
+	border: 1px solid #eee;
+}
+
 .info{
 	border: 1px solid #eee;
 }

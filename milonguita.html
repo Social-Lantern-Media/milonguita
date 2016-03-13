@@ -1,5 +1,5 @@
 <head>
-  <title>milonguita</title>
+  <title>Te Vas de Milonga</title>
   <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
 </head>
 
@@ -7,29 +7,28 @@
 	<header id="header">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-4 text-left"><h1>Milonguita!</h1></div>
-				<div class="col-md-8 text-right login">{{> loginFB}}</div>
+				<div class="col-md-4 text-left"><h1 id="brand">TVM!</h1></div>
+				<div class="col-md-6 text-right login">{{> loginFB}}</div>
+				<div class="col-md-2 login"><button class="show-about btn btn-default">Sobre TVM</button></div>
 			</div>
 		</div>
 	</header>
-	<div class="container">
+	<div class="container  {{#if hideCalendar}}hide{{/if}}">
 		<div class="row">
 			<div class="col-md-12 text-center controls">
 				<div class="col-md-6">
 					{{#if currentUser}}		
-						{{#if showPubForm }}
-							<button class="show-pub-form btn btn-default">Close</button>	
-						{{else}}
-							<button class="show-pub-form btn btn-default">Add a new Publication <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-						{{/if}}
+						{{#unless showPubForm }}
+							<button class="show-pub-form btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicacion</button>
+						{{/unless}}
 					{{/if}}
 				</div>
 				<div class="col-md-6">
 					{{#if existsPreviousWeek}}
-					   <button class="previous-week btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Previous Week</button>
+					   <button class="previous-week btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</button>
 					{{/if}}
 					{{#if existsNextWeek}}
-					   <button class="next-week btn btn-default">Next Week <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+					   <button class="next-week btn btn-default">Semana siguiente <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 					{{/if}}
 				</div>
 			</div>
@@ -37,7 +36,7 @@
 	</div>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-12 text-center">
+			<div class="col-md-12">
 				{{#if currentUser}}
 			
 					{{> addPublication}}
@@ -55,8 +54,14 @@
 				{{> infoPublication}}
 			</div>
 		{{/if}}
+
+		{{#if showAbout}}
+			<div class="row">
+				{{> aboutSection}}
+			</div>
+		{{/if}}
 	
-		<div class="row">
+		<div class="row {{#if hideCalendar}}hide{{/if}}">
 			<div class="col-md-12 text-left">
 				{{> daysOfWeek}}
 			</div>
@@ -101,16 +106,16 @@
 			<p>
 				{{#if currentUser}}
 					{{#if canUpvote}}
-						<button class="btn btn-default upvote">Recomendar <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>
+						<button class="btn btn-default upvote"> <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> Recomendar</button>
 					{{else}}
-						<button class="btn btn-default cancel-upvote">Recomendada <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+						<button class="btn btn-default cancel-upvote"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Recomendada</span></button>
 					{{/if}}
 				{{/if}}
 				<button class="pub-info btn btn-default">Ver mas</button>
 			</p>
 			{{#if isOwnerOrAdmin }}
-				<button class="btn btn-default delete">Eliminar <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-				<button class="btn btn-default show-edit-pub-form">Editar <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+				<button class="btn btn-default delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button>
+				<button class="btn btn-default show-edit-pub-form"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Editar</button>
     		{{/if}}
 		</div>
 		</div>
@@ -124,7 +129,7 @@
 			<div class="col-md-4">
 				<img src="{{c.url pubInfo.picPublicId}}" class="img-responsive" />
 			</div>
-			<div class="col-md-7 col-md-offset-1">
+			<div class="col-md-8">
 				<div class="col-md-12">
 					<div class="col-md-10">
 						<h2 style="margin-top:0;">{{pubInfo.name}}</h2>
@@ -134,38 +139,45 @@
 					</div>
 				</div>
 				<div class="col-md-12" style="margin-top:10px;">
-					<p>Tipo de publicacion: {{pubInfo.type}}</p>
-					<p>Publicacion creada por {{pubInfo.username}}</p>
-					<p>Direccion: {{pubInfo.address}}</p>
-					<p>Fecha: {{pubInfo.date}}</p>
-					<p>Costo: {{pubInfo.cost}}</p>
-					<p>Hora: {{pubInfo.time}}</p>
-					<p>Facebook: {{pubInfo.fbLink}}</p>
-					<p>Recomendado por {{pubInfo.upvoteCount}} usuarios de milonguita</p>
-				</div>
-				<div class="col-md-12" style="margin-top:20px;">
-					{{#unless isEmptyFBFriendsUpvoted}}
-						<p>{{numFBFriendsUpvoted}} of your friends upvoted this publication.</p>
-					{{/unless}}
-					{{#each getFBFriendsUpvoted}}
-							<img src="{{url}}" title="{{name}}"/>
-					{{/each}}
+					<p><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> 
+						Tipo de publicacion: {{pubInfo.type}}</p>
+					<p><span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
+						Publicacion creada por {{pubInfo.username}}</p>
+					<p><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> 
+						Direccion: {{pubInfo.address}}</p>
+					<p><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> 
+						Fecha: {{pubInfo.date}}</p>
+					<p><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> 
+						Costo: {{pubInfo.cost}}</p>
+					<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> 
+						Hora: {{pubInfo.time}}</p>
+					<p><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 
+						Facebook: {{pubInfo.fbLink}}</p>
+					<p><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> 
+						Recomendado por {{pubInfo.upvoteCount}} usuarios de milonguita</p>
 				</div>
 			</div>
 			<div class="col-md-12 text-center" style="margin-top:10px;">
-				<div class="col-md-4">
+				<div class="col-md-8 col-md-offset-2">
+					<div class="col-md-12">
+						{{#unless isEmptyFBFriendsUpvoted}}
+							<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicacion.</p>
+						{{/unless}}
+						{{#each getFBFriendsUpvoted}}
+								<img src="{{url}}" title="{{name}}"/>
+						{{/each}}
+					</div>
+				</div>
+				<div class="col-md-8 col-md-offset-2">
 					<h4>Descripcion: </h4>
 					<div class="col-md-12 text-left">
 						<p>{{pubInfo.description}}</p>
 					</div>
 				</div>
-				<div class="col-md-8">
-					<h4>Mapa:</h4>
-					<div class="col-md-12">
-						<div class="col-md-10 col-md-offset-1">
-							<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.7242004602595!2d-122.48044378471664!3d37.81992857975122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808586deffffffc3%3A0xcded139783705509!2sGolden+Gate+Bridge!5e0!3m2!1sen!2sus!4v1457746766331" width="400" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
-						</div>
-					</div>
+			</div>
+			<div class="col-md-12">
+				<div class="col-md-2 col-md-offset-10">
+					<button class="close-info-pub btn btn-default pull-right">Cerrar</button>
 				</div>
 			</div>
 		</div>
@@ -173,53 +185,108 @@
 </template>
 
 <template name="addPublication">
-	<div class="col-md-12 {{#unless showPubForm }}hide{{/unless}}">
-		<h2>Agregar una nueva publicacion</h2>
-		<form class="new-publication">
-			<div class="col-md-12">				
-				<input type="text" name="name" class="required" placeholder="name" />
-			</div>
-			<div class="col-md-12">				
-				<select name="type" class="required">
-				  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
-				  <option value="event"  {{isTypeEvent editInfo.type}} >Evento</option>
-				  <option value="practica" {{isTypePractica editInfo.type}} >Practica</option>
-				</select>
-			</div>										
-			<div class="col-md-12">				
-				<textarea name="description" class="required" rows="3" placeholder="descripcion" ></textarea>
-			</div>	
-			<div class="col-md-12">				
-				<input type="text" name="address" class="required" placeholder="address" />
-			</div>
-			<div class="col-md-4 col-md-offset-4">				
-					<input id="add-datepicker" name="date" class="required date" type="hidden" />
-			</div>
-			<div class="col-md-12">				
-				<input type="text" name="cost" class="required" placeholder="cost" />
-			</div>
-			<div class="col-md-12">				
-				<input type="text" name="time" class="required" placeholder="time" />
-			</div>
-			<div class="col-md-12">				
-				<input type="text" name="fbLink" class="required url" placeholder="fb link" />
-			</div>
-			<div class="col-md-12">
-				<input type="checkbox" name="keepPublication"/> Keep Publication.
-			</div>
-			<div class="col-md-12 text-center">
-				<input type="file" id="photo_add" name="photo_add" accept="image/*"/>
-			</div>
-			<div class="col-md-12">				
-				<input type="submit" value="Add Publication" />
-			</div>
-		</form>
+	<div class="col-md-12 add {{#unless showPubForm }}hide{{/unless}}">
+		<div class="col-md-10 text-center"><h2>Agregar una nueva publicacion</h2></div>
+		<div class="col-md-2" style="margin-top:25px;">
+			<button class="close-addPub btn btn-default">Cerrar</button>
+		</div>
+		<div class="col-md-12">
+			<form class="new-publication form-horizontal">
+				<div class="col-md-6">
+				<div class="col-md-12">
+				<div class="form-group">
+					<label for="addPubName" class="col-sm-2 control-label">Nombre:</label>
+					<div class="col-sm-10">
+						<input id="addPubName" type="text" name="name" class="required form-control" />
+						<span class="help-block">A block of help text that breaks onto a new line and may extend beyond one line.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="addPubType" class="col-sm-2 control-label">Tipo de publicacion:</label>				
+					<div class="col-sm-10">
+						<select id="addPubType" name="type" class="required form-control">
+						  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
+						  <option value="event"  {{isTypeEvent editInfo.type}} >Evento</option>
+						  <option value="practica" {{isTypePractica editInfo.type}} >Practica</option>
+						</select>
+					</div>
+				</div>	
+				<div class="form-group">
+					<label for="addPubAddress" class="col-sm-2 control-label">Direccion:</label>
+					<div class="col-sm-10">				
+						<input id="addPubAddress" type="text" name="address" class="required form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="addPubCost" class="col-sm-2 control-label">Costo:</label>
+					<div class="col-sm-10">				
+						<input id="addPubCost" type="text" name="cost" class="required form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="addPubTime" class="col-sm-2 control-label">Hora:</label>
+					<div class="col-sm-10">				
+						<input id="addPubTime" type="text" name="time" class="required form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="addPubFBLink" class="col-sm-2 control-label">Facebook link:</label>
+					<div class="col-sm-10">				
+						<input id="addPubFBLink" type="text" name="fbLink" class="required url form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="photo_add" class="col-sm-2 control-label">Subir imagen:</label>					
+					<div class="col-sm-10">
+						<input type="file" id="photo_add" name="photo_add" class="form-control" accept="image/*"/>
+					</div>
+				</div>
+				</div>
+				</div>
+				<div class="col-md-6">
+				<div class="col-md-12">
+				<div class="form-group">
+					<label for="add-datepicker" class="col-sm-2 control-label">Fecha:</label>
+					<div class="col-sm-6 col-sm-offset-2">				
+						<input id="add-datepicker" name="date" class="required date form-control" type="hidden" />
+					</div>
+				</div>														
+				<div class="form-group">
+					<label for="addPubDesc" class="col-sm-12 text-left">Descripcion: </label>
+					<div class="col-sm-12">
+						<span class="help-block">A block of help text that breaks onto a new line and may extend beyond one line</span>				
+						<textarea id="addPubDesc" name="description" class="required form-control" rows="7" ></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="keepPublication" /> Mantener publicacion.
+							</label>
+						</div>
+					</div>
+				</div>
+				</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-12 text-center">				
+						<input type="submit" class="btn btn-default" value="Agregar Publicacion" />
+					</div>
+				</div>
+			</form>
+		</div>
 	</div>
 
 </template>
 
 <template name="editPublication">
-	<div class="col-md-8 col-md-offset-2 {{#unless showEditPubForm }}hide{{/unless}}">
+	<div class="col-md-8 col-md-offset-2 edit {{#unless showEditPubForm }}hide{{/unless}}">
+		<div class="col-md-12">
+			<div class="col-md-2 pull-right">
+				<button class="close-editPub btn btn-default">Cerrar</button>
+			</div>
+		</div>
 		<form class="edit-publication">
 				<div class="col-md-12">				
 					<input type="hidden" name="id"  class="required" value="{{editInfo._id}}" />
@@ -262,9 +329,20 @@
 	</div>
 </template>
 
+<template name="aboutSection">
+	<div class="col-md-12">
+		<div class="col-md-10">
+			<h1>Hola About!</h1>
+		</div>
+		<div class="col-md-2">
+			<button class="close-about btn btn-default">Cerrar</button>
+		</div>
+	</div>
+</template>
+
 <template name="daysOfWeek">
 	<div class="col-md-12 day">
-		<h4>{{nameOfDay 0}} ({{numberOfDate 0}})</h4>
+		<h3>{{nameOfDay 0}} ({{numberOfDate 0}})</h3>
 	</div>
 	<div class="col-md-12 day-grid">
 	{{# each day 0}}
@@ -273,7 +351,7 @@
 	</div>
 
 	<div class="col-md-12 day">
-		<h4>{{nameOfDay 1}} ({{numberOfDate 1}})</h4>
+		<h3>{{nameOfDay 1}} ({{numberOfDate 1}})</h3>
 	</div>
 	<div class="col-md-12 day-grid">
 	{{# each day 1}}
@@ -282,7 +360,7 @@
 	</div>
 
 	<div class="col-md-12 day">
-		<h4>{{nameOfDay 2}} ({{numberOfDate 2}})</h4>
+		<h3>{{nameOfDay 2}} ({{numberOfDate 2}})</h3>
 	</div>
 	<div class="col-md-12 day-grid">
 	{{#each day 2}}
@@ -291,7 +369,7 @@
 	</div>
 
 	<div class="col-md-12 day">
-		<h4>{{nameOfDay 3}} ({{numberOfDate 3}})</h4>
+		<h3>{{nameOfDay 3}} ({{numberOfDate 3}})</h3>
 	</div>
 	<div class="col-md-12 day-grid">
 	{{#each day 3}}
@@ -300,7 +378,7 @@
 	</div>
 
 	<div class="col-md-12 day">
-		<h4>{{nameOfDay 4}} ({{numberOfDate 4}})</h4>
+		<h3>{{nameOfDay 4}} ({{numberOfDate 4}})</h3>
 	</div>
 	<div class="col-md-12 day-grid">
 	{{#each day 4}}
@@ -309,7 +387,7 @@
 	</div>
 
 	<div class="col-md-12 day">
-		<h4>{{nameOfDay 5}} ({{numberOfDate 5}})</h4>
+		<h3>{{nameOfDay 5}} ({{numberOfDate 5}})</h3>
 	</div>
 	<div class="col-md-12 day-grid">
 	{{#each day 5}}
@@ -318,7 +396,7 @@
 	</div>
 
 	<div class="col-md-12 day">
-		<h4>{{nameOfDay 6}} ({{numberOfDate 6}})</h4>
+		<h3>{{nameOfDay 6}} ({{numberOfDate 6}})</h3>
 	</div>
 	<div class="col-md-12 day-grid">
 	{{#each day 6}}

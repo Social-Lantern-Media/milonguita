@@ -72,6 +72,13 @@ if (Meteor.isClient) {
 		},
 		isAdmin: function(){
 			return Meteor.user() != null && Meteor.user().profile.name == ADMIN_NAME;
+		},
+		hideCalendar(){
+			return Session.get('showPubInfo') || Session.get('showPubForm') || 
+						Session.get('showEditPubForm') || Session.get('showAbout');		
+		},
+		showAbout(){
+			return Session.get('showAbout');
 		}
 	});
 
@@ -213,7 +220,28 @@ if (Meteor.isClient) {
 
 		},
 		"click .show-pub-form": function(event){
-			Session.get("showPubForm") ? Session.set("showPubForm", false) : Session.set("showPubForm", true);
+			event.preventDefault();			
+			
+			Session.set("showPubForm", true);
+		},
+		"click #brand": function(event){
+			if (Session.get("showPubForm")){
+				Session.set("showPubForm", false);
+			}
+			if (Session.get("showEditPubForm")){
+				Session.set("showEditPubForm", false);
+				delete Session.keys.showEditPubFormId;
+			} 
+			if (Session.get("showPubInfo")){
+				Session.set("showPubInfo", false);
+				delete Session.keys.showPubInfoId;			
+			}
+			if (Session.get("showAbout")){
+				Session.set("showAbout", false);
+			}
+		},
+		"click .show-about": function(){
+			Session.get("showAbout") ? Session.set("showAbout", false) : Session.set("showAbout", true);
 		}		
 	});
 
@@ -291,6 +319,11 @@ if (Meteor.isClient) {
 	});
 
 	Template.addPublication.events({
+		"click .close-addPub": function(event){
+			event.preventDefault();
+
+			Session.set("showPubForm", false);
+		},
 		"change input[type='file']": function(e){
 			// Check if the value in the input is an image, if it is make the request to Cloudinary.
 			var form_validator = $('.new-publication').validate({
@@ -367,6 +400,13 @@ if (Meteor.isClient) {
 	});
 
 	Template.editPublication.events({
+		"click .close-editPub": function(event){
+			event.preventDefault();
+
+			Session.set("showEditPubForm", false);
+			Session.set("showEditPubFormId", "");
+			delete Session.keys.showEditPubFormId;
+		},
 		"change input[type='file']": function(e){
 			// Check if the value in the input is an image, if it is make the request to Cloudinary.
 			var form_validator = $('.edit-publication').validate({
@@ -436,6 +476,12 @@ if (Meteor.isClient) {
 			// Hide form
 			Session.set("showEditPubForm", false);
 			Session.set("showEditPubFormId", '');
+		}
+	});
+
+	Template.aboutSection.events({
+		"click .close-about": function(){
+			Session.set("showAbout", false);
 		}
 	});
 
@@ -670,7 +716,8 @@ if (Meteor.isServer){
 			var nameOldPubs = [];
 			// Delete all the old publications and save their names.
 			for (i = 0; i < oldPubs.length; i++){
-				nameOldPubs.push(oldPubs[i].name);
+				var name = oldPubs[i].name;
+				nameOldPubs.push(name);
 			
 				// Before removing the publication, check if it's a pub that is marked to be kept.
 				// If it is, create a new pub with the same info, in a month from now.
