@@ -1,5 +1,7 @@
 <head>
   <title>Te Vas de Milonga</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
   <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
 </head>
 
@@ -7,9 +9,9 @@
 	<header id="header">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-4 text-left"><h1 id="brand">TVM!</h1></div>
+				<div class="col-md-4 text-left"><h1 id="brand">tvm!</h1></div>
 				<div class="col-md-6 text-right login">{{> loginFB}}</div>
-				<div class="col-md-2 login"><button class="show-about btn btn-default">Sobre TVM</button></div>
+				<div class="col-md-2 login"><button class="show-about btn btn-default">Sobre tvm</button></div>
 			</div>
 		</div>
 	</header>
@@ -56,7 +58,7 @@
 		{{/if}}
 
 		{{#if showAbout}}
-			<div class="row">
+			<div class="row about">
 				{{> aboutSection}}
 			</div>
 		{{/if}}
@@ -69,12 +71,21 @@
 		
 		{{#if isAdmin}}
 		<div class="row">
-			<div class="col-md-12 text-center">
-				<button class="delete-old-pubs">Delete old publications</button>
+			<div class="col-md-12 text-left">
+				<button class="delete-old-pubs btn btn-default">Delete old publications</button>
 			</div>
 		</div>
 		{{/if}}
 	</div>
+	<footer id="footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<p><b>&lt;/&gt;</b> con <span class="glyphicon glyphicon-heart" aria-hidden="true"></span> en Uruguay. 2016.</p>
+				</div>
+			</div>
+		</div>
+	</footer>
 </body>
 
 <template name="loginFB">
@@ -281,62 +292,109 @@
 </template>
 
 <template name="editPublication">
-	<div class="col-md-8 col-md-offset-2 edit {{#unless showEditPubForm }}hide{{/unless}}">
+	<div class="col-md-12 edit {{#unless showEditPubForm }}hide{{/unless}}">
 		<div class="col-md-12">
-			<div class="col-md-2 pull-right">
+			<div class="col-md-10 text-center"><h2>Editar una publicacion</h2></div>
+			<div class="col-md-2" style="margin-top:25px;">
 				<button class="close-editPub btn btn-default">Cerrar</button>
 			</div>
 		</div>
-		<form class="edit-publication">
-				<div class="col-md-12">				
-					<input type="hidden" name="id"  class="required" value="{{editInfo._id}}" />
-				</div>							
-				<div class="col-md-12">				
-					<input type="text" name="name" class="required" value="{{editInfo.name}}" />
+		<div class="col-md-12">
+			<form class="edit-publication form-horizontal">
+				<div class="col-md-6">
+					<div class="col-md-12">
+						<div class="form-group">				
+							<input type="hidden" name="id"  class="required" value="{{editInfo._id}}" />
+						</div>							
+						<div class="form-group">
+							<label for="editPubName" class="col-sm-2 control-label">Nombre:</label>							
+							<div class="col-sm-10">				
+								<input id="editPubName" type="text" name="name" class="required form-control" value="{{editInfo.name}}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="editPubType" class="col-sm-2 control-label">Tipo de publicacion:</label>							
+							<div class="col-sm-10">				
+								<select id="editPubType" name="type" class="required form-control">
+								  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
+								  <option value="event"  {{isTypeEvent editInfo.type}} >Evento</option>
+								  <option value="practica" {{isTypePractica editInfo.type}} >Practica</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="editPubAddress" class="col-sm-2 control-label">Direccion:</label>
+							<div class="col-sm-10">				
+								<input id="editPubAddress" type="text" name="address" class="required form-control" value="{{editInfo.address}}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="editPubCost" class="col-sm-2 control-label">Costo:</label>
+							<div class="col-sm-10">				
+								<input id="editPubCost" type="text" name="cost" class="required form-control" value="{{editInfo.cost}}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="editPubTime" class="col-sm-2 control-label">Hora:</label>							
+							<div class="col-sm-10">				
+								<input id="editPubTime" type="text" name="time" class="required form-control" value="{{editInfo.time}}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="editPubFBLink" class="col-sm-2 control-label">Facebook link:</label>
+							<div class="col-sm-10">
+								<input id="editPubFBLink" type="text" name="fbLink" class="required url form-control" value="{{editInfo.fbLink}}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="photo_edit" class="col-sm-2 control-label">Subir imagen:</label>
+							<div class="col-sm-10">
+								<input type="file" id="photo_edit" name="photo" class="form-control" accept="image/*"/>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div class="col-md-12">				
-					<select name="type" class="required">
-					  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
-					  <option value="event"  {{isTypeEvent editInfo.type}} >Evento</option>
-					  <option value="practica" {{isTypePractica editInfo.type}} >Practica</option>
-					</select>
-				</div>										
-				<div class="col-md-12">				
-					<textarea name="description" class="required" rows="3" value="{{editInfo.description}}" ></textarea>
-				</div>	
-				<div class="col-md-12">				
-					<input type="text" name="address" class="required" value="{{editInfo.address}}" />
+				<div class="col-md-6">
+					<div class="col-md-12">						
+						<div class="form-group">
+							<label for="edit-datepicker" class="col-sm-2 control-label">Fecha:</label>
+							<div class="col-sm-6 col-sm-offset-2">				
+								<input id="edit-datepicker" name="date" class="required date form-control" type="hidden" />
+							</div>
+						</div>																
+						<div class="form-group">
+							<label for="editPubDesc" class="col-sm-12 text-left">Descripcion: </label>
+							<div class="col-sm-12">				
+								<textarea id="editPubDesc" name="description" class="required form-control" rows="7" value="{{editInfo.description}}" ></textarea>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div class="col-md-4 col-md-offset-4">				
-					<input id="edit-datepicker" name="date" class="required date" type="hidden" />
-				</div>
-				<div class="col-md-12">				
-					<input type="text" name="cost" class="required" value="{{editInfo.cost}}" />
-				</div>
-				<div class="col-md-12">				
-					<input type="text" name="time" class="required" value="{{editInfo.time}}" />
-				</div>
-				<div class="col-md-12">				
-					<input type="text" name="fbLink" class="required url" value="{{editInfo.fbLink}}" />
-				</div>
-				<div class="col-md-12 text-center">
-					<input type="file" id="photo_edit" name="photo" accept="image/*"/>
-				</div>
-				<div class="col-md-12">				
-					<input type="submit" value="Edit Publication" />
+				<div class="form-group">
+					<div class="col-sm-12 text-center">			
+						<input type="submit" class="btn btn-default" value="Edit Publication" />
+					</div>
 				</div>
 			</form>
+		</div>
 	</div>
 </template>
 
 <template name="aboutSection">
 	<div class="col-md-12">
 		<div class="col-md-10">
-			<h1>Hola About!</h1>
+			<h1>Sobre mvt!</h1>
 		</div>
 		<div class="col-md-2">
 			<button class="close-about btn btn-default">Cerrar</button>
 		</div>
+	</div>
+	<div class="col-md-12">
+		<p>Bacon ipsum dolor amet shank boudin tri-tip pork loin, shankle porchetta ribeye prosciutto pork belly ball tip. Ball tip pork loin strip steak porchetta corned beef ham hock shank fatback kielbasa meatball prosciutto pork chop short ribs. Pork alcatra short ribs, spare ribs pig hamburger shank kevin. Fatback ham hock leberkas ribeye, pork belly jerky hamburger shoulder prosciutto turkey. Corned beef alcatra bresaola turkey sirloin meatball cow leberkas. Ham hock brisket chuck frankfurter meatball venison tail capicola spare ribs pork loin short loin. Flank pancetta chuck fatback beef, cow biltong turducken andouille t-bone meatloaf sausage pork belly tail.</p>
+
+<p>Short loin prosciutto ribeye biltong, porchetta flank picanha pork loin t-bone filet mignon pig ham salami beef tongue. Bacon ribeye cupim, spare ribs pork chop ground round brisket porchetta. Porchetta alcatra ground round t-bone pork belly. Pork meatball prosciutto meatloaf. Ball tip beef venison, beef ribs short ribs chuck spare ribs salami pig pork belly.</p>
+
+<p>Pig cow sausage, pork andouille sirloin spare ribs t-bone pork chop bacon turducken flank. T-bone hamburger pancetta jerky, sausage ham prosciutto meatloaf biltong alcatra. Cupim tongue meatloaf, alcatra leberkas biltong landjaeger strip steak ground round prosciutto short loin pork shoulder andouille rump. Sirloin prosciutto spare ribs turkey, boudin filet mignon jerky porchetta strip steak. Doner capicola short loin pig tongue jowl. Tri-tip shankle chuck turkey tail.</p>
 	</div>
 </template>
 

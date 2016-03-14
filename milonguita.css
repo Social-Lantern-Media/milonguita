@@ -6,6 +6,10 @@
 	border-bottom:1px solid #eee;
 }
 
+#footer{
+	border-top: 1px solid #eee;
+}
+
 .controls{
 	margin-top:25px;
 }
@@ -42,3 +46,8 @@
 .info-margin{
 	margin: 10px;
 }
+
+.about{
+	border: 1px solid #eee;
+}
+
