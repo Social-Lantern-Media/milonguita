@@ -153,7 +153,10 @@ if (Meteor.isClient) {
 			return moment.utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('dddd');
 		},
 		numberOfDate: function(numOfDay){
-			return moment.utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('D, MMM');
+			return moment.utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format('D');
+		},
+		nameOfMonth: function(numOfDay){
+			return moment.utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day').format("MMMM");
 		},
 		day: function(numOfDay){
 			var startDate = moment.utc().utcOffset("-03:00").add(numOfDay + 7*Session.get('weekNumber'), 'days').startOf('day');

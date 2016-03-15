@@ -1,17 +1,38 @@
+body{
+	padding-top:200px;
+}
+
 .login{
-	margin-top:25px;
+	background-color:white;
+	color:black;
+	border-bottom-left-radius:20px;
+	border-bottom-right-radius:20px;
+}
+
+.fb-login{
+	background-color:#3B579D;
+	color:white;
 }
 
 #header{
-	border-bottom:1px solid #eee;
+	height: 200px;
+	background-image:url("/images/bg2.jpg");
+	background-size: cover;
+	color: white;
 }
 
 #footer{
-	border-top: 1px solid #eee;
+	background-color:#0E0C2D;
+	color: #eee;
+	padding:10px 0;
+}
+
+.calendar{
+	margin-top:20px;
 }
 
 .controls{
-	margin-top:25px;
+	margin-top:80px;
 }
 
 .day{
@@ -20,6 +41,7 @@
 
 .box{
 	border: 1px solid rgb(214, 214, 214);
+	background-color:white;
 }
 
 .day-grid{
@@ -49,5 +71,9 @@
 
 .about{
 	border: 1px solid #eee;
+}
+
+.odd-row{
+	background-color: rgb(245, 245, 245);
 }
 

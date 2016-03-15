@@ -6,36 +6,40 @@
 </head>
 
 <body>
-	<header id="header">
+	<header id="header" class="navbar-fixed-top">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-4 text-left"><h1 id="brand">tvm!</h1></div>
-				<div class="col-md-6 text-right login">{{> loginFB}}</div>
-				<div class="col-md-2 login"><button class="show-about btn btn-default">Sobre tvm</button></div>
+				<div class="col-md-9 text-left"><h1 id="brand">Te vas de milonga</h1></div>
+				<div class="col-md-3 text-center login">{{> loginFB}}</div>
+			</div>
+			<div class="row controls {{#if hideCalendar}}hide{{/if}}">
+				<div class="col-md-12 text-right">
+
+						{{#if currentUser}}		
+							{{#unless showPubForm }}
+								<button class="show-pub-form btn btn-default">
+									<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicacion
+								</button>
+							{{/unless}}
+						{{/if}}
+
+
+						<button class="show-about btn btn-default">Sobre TVM</button>
+
+					{{#if existsPreviousWeek}}
+
+							<button class="previous-week btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</button>
+
+					{{/if}}
+					{{#if existsNextWeek}}
+
+							<button class="next-week btn btn-default">Semana siguiente <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+
+					{{/if}}
+				</div>
 			</div>
 		</div>
 	</header>
-	<div class="container  {{#if hideCalendar}}hide{{/if}}">
-		<div class="row">
-			<div class="col-md-12 text-center controls">
-				<div class="col-md-6">
-					{{#if currentUser}}		
-						{{#unless showPubForm }}
-							<button class="show-pub-form btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicacion</button>
-						{{/unless}}
-					{{/if}}
-				</div>
-				<div class="col-md-6">
-					{{#if existsPreviousWeek}}
-					   <button class="previous-week btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</button>
-					{{/if}}
-					{{#if existsNextWeek}}
-					   <button class="next-week btn btn-default">Semana siguiente <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
-					{{/if}}
-				</div>
-			</div>
-		</div>
-	</div>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
@@ -62,12 +66,16 @@
 				{{> aboutSection}}
 			</div>
 		{{/if}}
+
+	</div>
 	
-		<div class="row {{#if hideCalendar}}hide{{/if}}">
-			<div class="col-md-12 text-left">
-				{{> daysOfWeek}}
-			</div>
+	<div class="row calendar {{#if hideCalendar}}hide{{/if}}">
+		<div class="col-md-12 text-left">
+			{{> daysOfWeek}}
 		</div>
+	</div>
+
+	<div class="container">
 		
 		{{#if isAdmin}}
 		<div class="row">
@@ -81,7 +89,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12 text-center">
-					<p><b>&lt;/&gt;</b> con <span class="glyphicon glyphicon-heart" aria-hidden="true"></span> en Uruguay. 2016.</p>
+					<p><b>&lt;/&gt;</b> con <span class="glyphicon glyphicon-heart" aria-hidden="true"></span> por un milonguero uruguayo. 2016.</p>
 				</div>
 			</div>
 		</div>
@@ -92,20 +100,20 @@
 	{{#if currentUser}}
 		<p>
 			{{currentUser.services.facebook.name}}
-			<button id="logout" class="btn btn-default">Salir</button>
+			<button id="logout" class="fb-login btn btn-default">Salir</button>
 		</p>
 	{{else}}
-		<p><button id="facebook-login" class="btn btn-default">Ingresar con Facebook</button></p>	
+		<p><button id="facebook-login" class="fb-login btn btn-default">Ingresar con Facebook</button></p>	
 	{{/if}}
 </template>
 
 <template name="publication">
-	<div class="col-md-4">
+	<div class="col-md-3">
 		<div class="col-md-12 box">
 		<div class="col-md-12 text-center" style="margin-bottom:5px;">
 			<h4>{{name}}</h4>
 		</div>
-		<div class="col-md-6 col-md-offset-3">
+		<div class="col-md-10 col-md-offset-1">
 			<img src="{{c.url picPublicId height=150 width=150 crop='fill'}}" class="img-responsive img-circle"/>			
 		</div>
 		<div class="col-md-12 text-left">
@@ -383,7 +391,7 @@
 <template name="aboutSection">
 	<div class="col-md-12">
 		<div class="col-md-10">
-			<h1>Sobre mvt!</h1>
+			<h1>Sobre tvm!</h1>
 		</div>
 		<div class="col-md-2">
 			<button class="close-about btn btn-default">Cerrar</button>
@@ -399,66 +407,137 @@
 </template>
 
 <template name="daysOfWeek">
-	<div class="col-md-12 day">
-		<h3>{{nameOfDay 0}} ({{numberOfDate 0}})</h3>
-	</div>
-	<div class="col-md-12 day-grid">
-	{{# each day 0}}
-		{{> publication}}
-	{{/each}}
-	</div>
-
-	<div class="col-md-12 day">
-		<h3>{{nameOfDay 1}} ({{numberOfDate 1}})</h3>
-	</div>
-	<div class="col-md-12 day-grid">
-	{{# each day 1}}
-		{{> publication}}
-	{{/each}}
-	</div>
-
-	<div class="col-md-12 day">
-		<h3>{{nameOfDay 2}} ({{numberOfDate 2}})</h3>
-	</div>
-	<div class="col-md-12 day-grid">
-	{{#each day 2}}
-		{{> publication}}
-	{{/each}}
+	
+	<div class="row">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 day-grid">
+					<div class="col-md-3">
+						<div class="col-md-10 col-md-offset-1 box">
+						<h3>{{nameOfDay 0}}</h3>
+						<h1 class="text-center">{{numberOfDate 0}}</h1>
+						<h3 class="text-right">{{nameOfMonth 0}}</h3>
+						</div>
+					</div>	
+					{{# each day 0}}
+						{{> publication}}
+					{{/each}}
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<div class="col-md-12 day">
-		<h3>{{nameOfDay 3}} ({{numberOfDate 3}})</h3>
-	</div>
-	<div class="col-md-12 day-grid">
-	{{#each day 3}}
-		{{> publication}}
-	{{/each}}
-	</div>
-
-	<div class="col-md-12 day">
-		<h3>{{nameOfDay 4}} ({{numberOfDate 4}})</h3>
-	</div>
-	<div class="col-md-12 day-grid">
-	{{#each day 4}}
-		{{> publication}}
-	{{/each}}
-	</div>
-
-	<div class="col-md-12 day">
-		<h3>{{nameOfDay 5}} ({{numberOfDate 5}})</h3>
-	</div>
-	<div class="col-md-12 day-grid">
-	{{#each day 5}}
-		{{> publication}}
-	{{/each}}
+	<div class="row odd-row">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 day-grid">
+					<div class="col-md-3">
+						<div class="col-md-10 col-md-offset-1 box">
+							<h3>{{nameOfDay 1}}</h3>
+							<h1 class="text-center">{{numberOfDate 1}}</h1>
+							<h3 class="text-right">{{nameOfMonth 1}}</h3>
+						</div>
+					</div>	
+					{{# each day 1}}
+						{{> publication}}
+					{{/each}}
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<div class="col-md-12 day">
-		<h3>{{nameOfDay 6}} ({{numberOfDate 6}})</h3>
+	<div class="row">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 day-grid">
+					<div class="col-md-3">
+						<div class="col-md-10 col-md-offset-1 box">
+							<h3>{{nameOfDay 2}}</h3>
+							<h1 class="text-center">{{numberOfDate 2}}</h1>
+							<h3 class="text-right">{{nameOfMonth 2}}</h3>
+						</div>
+					</div>
+					{{#each day 2}}
+						{{> publication}}
+					{{/each}}
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="col-md-12 day-grid">
-	{{#each day 6}}
-		{{> publication}}
-	{{/each}}
+
+	<div class="row odd-row">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 day-grid">
+					<div class="col-md-3">
+						<div class="col-md-10 col-md-offset-1 box">
+							<h3>{{nameOfDay 3}}</h3>
+							<h1 class="text-center">{{numberOfDate 3}}</h1>
+							<h3 class="text-right">{{nameOfMonth 3}}</h3>
+						</div>
+					</div>
+					{{#each day 3}}
+						{{> publication}}
+					{{/each}}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 day-grid">
+					<div class="col-md-3">
+						<div class="col-md-10 col-md-offset-1 box">
+							<h3>{{nameOfDay 4}}</h3>
+							<h1 class="text-center">{{numberOfDate 4}}</h1>
+							<h3 class="text-right">{{nameOfMonth 4}}</h3>
+						</div>
+					</div>
+				{{#each day 4}}
+					{{> publication}}
+				{{/each}}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row odd-row">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 day-grid">
+					<div class="col-md-3">
+						<div class="col-md-10 col-md-offset-1 box">
+							<h3>{{nameOfDay 5}}</h3>
+							<h1 class="text-center">{{numberOfDate 5}}</h1>
+							<h3 class="text-right">{{nameOfMonth 5}}</h3>
+						</div>
+					</div>
+				{{#each day 5}}
+					{{> publication}}
+				{{/each}}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 day-grid">
+					<div class="col-md-3">
+						<div class="col-md-10 col-md-offset-1 box">
+							<h3>{{nameOfDay 6}}</h3>
+							<h1 class="text-center">{{numberOfDate 6}}</h1>
+							<h3 class="text-right">{{nameOfMonth 6}}</h3>
+						</div>
+					</div>
+				{{#each day 6}}
+					{{> publication}}
+				{{/each}}
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
