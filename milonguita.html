@@ -10,10 +10,21 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-9 text-left"><h1 id="brand">Te vas de milonga</h1></div>
-				<div class="col-md-3 text-center login">{{> loginFB}}</div>
+				{{#if currentUser}}
+					<div class="col-md-3 text-center login">
+						<p>
+							{{currentUser.services.facebook.name}}
+							<button id="logout" class="fb-login btn btn-default">Salir</button>
+						</p>
+					</div>
+				{{/if}}
 			</div>
 			<div class="row controls {{#if hideCalendar}}hide{{/if}}">
 				<div class="col-md-12 text-right">
+
+						{{#unless currentUser}}
+							<button id="facebook-login" class="fb-login btn btn-default">Ingresar con Facebook</button>
+						{{/unless}}						
 
 						{{#if currentUser}}		
 							{{#unless showPubForm }}
@@ -95,17 +106,6 @@
 		</div>
 	</footer>
 </body>
-
-<template name="loginFB">
-	{{#if currentUser}}
-		<p>
-			{{currentUser.services.facebook.name}}
-			<button id="logout" class="fb-login btn btn-default">Salir</button>
-		</p>
-	{{else}}
-		<p><button id="facebook-login" class="fb-login btn btn-default">Ingresar con Facebook</button></p>	
-	{{/if}}
-</template>
 
 <template name="publication">
 	<div class="col-md-3">

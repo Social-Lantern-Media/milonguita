@@ -9,6 +9,10 @@ var ADMIN_NAME = "Tiago Páez";
 Meteor.users.deny({update: function () { return true; }});
 
 if (Meteor.isServer){
+	Meteor.publish("allPubs", function(){
+		return Publications.find({});
+	});	
+
 	Meteor.publish("publications", function(weekNumber){
 		// Check that weekNumber is valid (between 0 and 3).
 		validWeek = Match.Where(function(x){
@@ -47,6 +51,8 @@ if (Meteor.isClient) {
 	// of the handler and the stop() function it uses. 	
 	var subscriptionHandle;
 	subscriptionHandle = Meteor.subscribe("publications", Number(Session.get('weekNumber')));
+
+	//Meteor.subscribe("allPubs");
 
 	Meteor.subscribe("userData");
 	
@@ -205,6 +211,22 @@ if (Meteor.isClient) {
 
 			Session.set('weekNumber', weekNumber+1);
 		},
+		'click #facebook-login': function(event){
+			event.preventDefault();
+			Meteor.loginWithFacebook({ requestPermissions: ['public_profile', 'user_friends'] }, function(err){
+				if (err){
+					throw new Meteor.Error("Facebook Login failed!");
+				}
+			});
+		},
+		'click #logout': function(event){
+			event.preventDefault();
+			Meteor.logout(function(err){
+				if (err){
+					throw new Meteor.Error("Logout failed!");
+				}
+			});
+		},
 		"click .delete-old-pubs": function(event){
 			event.preventDefault();
 
@@ -249,22 +271,7 @@ if (Meteor.isClient) {
 	});
 
 	Template.loginFB.events({
-		'click #facebook-login': function(event){
-			event.preventDefault();
-			Meteor.loginWithFacebook({ requestPermissions: ['public_profile', 'user_friends'] }, function(err){
-				if (err){
-					throw new Meteor.Error("Facebook Login failed!");
-				}
-			});
-		},
-		'click #logout': function(event){
-			event.preventDefault();
-			Meteor.logout(function(err){
-				if (err){
-					throw new Meteor.Error("Logout failed!");
-				}
-			});
-		}
+		
 	});
 
 	Template.infoPublication.events({
@@ -724,26 +731,26 @@ if (Meteor.isServer){
 			
 				// Before removing the publication, check if it's a pub that is marked to be kept.
 				// If it is, create a new pub with the same info, in a month from now.
-				if (oldPubs[i].keepPublication){
+				if (oldPubs[i].keepPublication){					
 					Publications.insert({
-						name: OldPubs[i].name,
-						type: OldPubs[i].type,
+						name: oldPubs[i].name,
+						type: oldPubs[i].type,
 						createdAt: moment.utc().utcOffset("-03:00").toDate(),
-						description: OldPubs[i].description,
-						address: OldPubs[i].address,
+						description: oldPubs[i].description,
+						address: oldPubs[i].address,
 						date: moment(OldPubs[i].date).add(7*4, 'days').toDate(),
-						cost: OldPubs[i].cost,
-						time: OldPubs[i].time,
-						fbLink: OldPubs[i].fbLink,
-						picPublicId: OldPubs[i].picPublicId,
-						upvotes: OldPubs[i].upvotes,
-						upvoteCount: OldPubs[i].upvoteCount,
-						keepPublication: OldPubs[i].keepPublication,
-						owner: OldPubs[i].owner,
-						username: OldPubs[i].username
+						cost: oldPubs[i].cost,
+						time: oldPubs[i].time,
+						fbLink: oldPubs[i].fbLink,
+						picPublicId: oldPubs[i].picPublicId,
+						upvotes: oldPubs[i].upvotes,
+						upvoteCount: oldPubs[i].upvoteCount,
+						keepPublication: oldPubs[i].keepPublication,
+						owner: oldPubs[i].owner,
+						username: oldPubs[i].username
 					});
-				}				
-
+				}
+				
 				Publications.remove(oldPubs[i]._id);
 			}
 
