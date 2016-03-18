@@ -3,28 +3,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
-  <link href='https://fonts.googleapis.com/css?family=Source+Serif+Pro|Candal|Raleway:400,100|Frijole|Coustard:900|Work+Sans:900|Alfa+Slab+One' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Source+Serif+Pro|Candal|Raleway:400,100|Frijole' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 	<header id="header" class="navbar-fixed-top">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-9 text-left"><h1 id="brand" class="main-title">Te vas de <br/> &nbsp; &nbsp; milonga</h1></div>
-				{{#if currentUser}}
-					<div class="col-md-3 text-center login">
-						<p>
-							{{currentUser.services.facebook.name}}
-							<button id="logout" class="fb-login btn btn-default">Salir</button>
-						</p>
-					</div>
-				{{/if}}
-			</div>
-			<div class="row controls {{#if hideCalendar}}hide{{/if}}">
-				<div class="col-md-12 text-right">
+				<div class="col-md-4 text-left">
+					<h1 id="brand" class="main-title">Te vas de <br/> &nbsp; &nbsp; milonga</h1>
+					<h1 id="brand-small" class="main-title" style="display:none;">TVM</h1>
+				</div>
+				<div class="col-md-8 text-right controls {{#if hideCalendar}}hide{{/if}}">
 
 						{{#unless currentUser}}
 							<button id="facebook-login" class="fb-login btn btn-default">Ingresar con Facebook</button>
+						{{else}}
+							<button id="logout" class="fb-login btn btn-default">Salir</button>
 						{{/unless}}						
 
 						{{#if currentUser}}		
@@ -106,6 +101,26 @@
 			</div>
 		</div>
 	</footer>
+
+	<script>
+		$(document).ready(function(){
+			$(window).scroll(function(){
+				if ($(document).scrollTop() > 100){
+					$('#header').css('height', '100px');
+					$('body').css('padding-top', '230px');
+					$('.controls').css('margin-top', '20px');
+					$('#brand').hide();
+					$('#brand-small').show();
+				}else{
+					$('header').css('height', '300px');
+					$('body').css('padding-top', '300px');
+					$('.controls').css('margin-top', '245px');
+					$('#brand-small').hide();
+					$('#brand').show();
+				}
+			});
+		});
+	</script>
 </body>
 
 <template name="publication">
@@ -577,3 +592,4 @@
 		</div>
 	</div>
 </template>
+

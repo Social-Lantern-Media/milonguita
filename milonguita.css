@@ -1,5 +1,7 @@
 body{
-	padding-top:200px;
+	padding-top:300px;
+	-webkit-transition: all 0.4s ease;
+   transition: all 0.4s ease;
 }
 
 .login{
@@ -14,10 +16,12 @@ body{
 }
 
 #header{
-	height: 200px;
+	height: 300px;
 	background-image:url("/images/bg2.jpg");
 	background-size: cover;
 	color: white;
+	-webkit-transition: all 0.4s ease;
+   transition: all 0.4s ease;
 }
 
 #footer{
@@ -31,7 +35,9 @@ body{
 }
 
 .controls{
-	margin-top:25px;
+	margin-top:245px;	
+	-webkit-transition: all 0.4s ease;
+   transition: all 0.4s ease;
 }
 
 .day{
@@ -99,5 +105,9 @@ body{
 
 .main-title{
 	font-family: 'Frijole', cursive;
-	font-size:45px;
+	font-size:46px;
+}
+
+.shrink{
+	height:100px;
 }
