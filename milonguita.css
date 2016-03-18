@@ -10,8 +10,7 @@ body{
 }
 
 .fb-login{
-	background-color:#3B579D;
-	color:white;
+
 }
 
 #header{
@@ -32,7 +31,7 @@ body{
 }
 
 .controls{
-	margin-top:80px;
+	margin-top:25px;
 }
 
 .day{
@@ -74,6 +73,31 @@ body{
 }
 
 .odd-row{
-	background-color: rgb(245, 245, 245);
+	background-color: rgb(240, 240, 240);
 }
 
+.pub-info-item{
+	font-family: 'Source Serif Pro', serif;
+	font-size:20px;
+}
+
+.pub-title{
+	font-family: 'Candal', sans-serif;
+}
+
+.calendar-number{
+	font-family: 'Raleway', sans-serif;
+	font-weight: 100;
+	font-size:80px;
+	margin-top:0;
+}
+
+.calendar-day{
+	margin-bottom: 0;
+	text-transform:capitalize;
+}
+
+.main-title{
+	font-family: 'Frijole', cursive;
+	font-size:45px;
+}

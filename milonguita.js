@@ -92,6 +92,12 @@ if (Meteor.isClient) {
 		pubInfo: function(){
 			return Publications.findOne(Session.get('showPubInfoId'));
 		},
+		formatedDate: function(date){
+			return moment(date).format("LL");
+		},
+		pluralizeUsuario: function(upvoteCount){
+			return upvoteCount == 1 ? "usuario" : "usuarios";
+		},
 		isEmptyFBFriendsUpvoted: function(){
 			return Session.get("profile_pics") == undefined;
 		},
@@ -100,6 +106,15 @@ if (Meteor.isClient) {
 		},
 		getFBFriendsUpvoted: function(){
 			return Session.get("profile_pics");
+		},
+		canUpvote: function(upvotes){
+			// This helper checks if this user is already in the list of upvoters for this publication.
+			for (var i = 0; i < upvotes.length; i++){
+				if (upvotes[i].upvoterId === Meteor.userId()){
+					return false;
+				}
+			}
+			return true;
 		}
 	});
 
@@ -107,17 +122,8 @@ if (Meteor.isClient) {
 		isOwnerOrAdmin: function(){
 			return (this.owner === Meteor.userId() || (Meteor.user() != null && Meteor.user().profile.name == ADMIN_NAME));
 		},
-		canUpvote: function(){
-			// This helper checks if this user is already in the list of upvoters for this publication.
-			for (var i = 0; i < this.upvotes.length; i++){
-				if (this.upvotes[i].upvoterId === Meteor.userId()){
-					return false;
-				}
-			}
-			return true;
-		},
-		pluralUpvoteCount: function(){
-			return this.upvoteCount != 1;
+		pluralizeVez: function(upvoteCount){
+			return upvoteCount == 1 ? "vez" : "veces";
 		}
 	});
 
@@ -242,7 +248,6 @@ if (Meteor.isClient) {
 					console.log(res);
 				}
 			});
-
 		},
 		"click .show-pub-form": function(event){
 			event.preventDefault();			
@@ -270,10 +275,6 @@ if (Meteor.isClient) {
 		}		
 	});
 
-	Template.loginFB.events({
-		
-	});
-
 	Template.infoPublication.events({
 		"click .close-info-pub": function(event){
 			event.preventDefault();
@@ -283,6 +284,16 @@ if (Meteor.isClient) {
 
 			delete Session.keys.profile_pics;
 			delete Session.keys.num_profile_pics;
+		},
+		"click .upvote":function(event){
+			event.preventDefault();	
+
+			Meteor.call("upvotePublication", Session.get("showPubInfoId"));
+		},
+		"click .cancel-upvote":function(event){
+			event.preventDefault();
+
+			Meteor.call("cancelUpvotePublication", Session.get("showPubInfoId"));
 		}
 	});
 
@@ -315,16 +326,6 @@ if (Meteor.isClient) {
 					}
 				});				
 			}
-		},
-		"click .upvote":function(event){
-			event.preventDefault();
-
-			Meteor.call("upvotePublication", this._id);
-		},
-		"click .cancel-upvote":function(event){
-			event.preventDefault();
-
-			Meteor.call("cancelUpvotePublication", this._id);
 		}
 	});
 
@@ -373,7 +374,6 @@ if (Meteor.isClient) {
 
 			// Create Date object
 			var datePub = new Date(event.target.date.value);
-			console.log(datePub);
 
 			// Get values from form element
 			var pub = { 'name': event.target.name.value,
@@ -382,7 +382,8 @@ if (Meteor.isClient) {
 							'address': event.target.address.value,
 							'date': datePub,
 							'cost': event.target.cost.value,
-							'time': event.target.time.value,
+							'timeStarts': event.target.timeStarts.value,
+							'timeEnds': event.target.timeEnds.value,
 							'fbLink': event.target.fbLink.value,
 							'picPublicId': pic_public_id,
 							'keepPublication': event.target.keepPublication.checked
@@ -398,7 +399,8 @@ if (Meteor.isClient) {
 			event.target.date.value = "";
 			$('#add-datepicker').data('DateTimePicker').clear();
 			event.target.cost.value = "";
-			event.target.time.value = "";
+			event.target.timeStarts.value = "";
+			event.target.timeEnds.value = "";
 			event.target.fbLink.value = "";
 			event.target.photo_add.value = "";
 			event.target.keepPublication.checked = false;
@@ -464,7 +466,8 @@ if (Meteor.isClient) {
 							'address': event.target.address.value,
 							'date': datePub,
 							'cost': event.target.cost.value,
-							'time': event.target.time.value,
+							'timeStarts': event.target.timeStarts.value,
+							'timeEnds': event.target.timeEnds.value,
 							'fbLink': event.target.fbLink.value,
 							'picPublicId': pic_public_id,
 		 	};			
@@ -479,7 +482,8 @@ if (Meteor.isClient) {
 			event.target.date.value = "";
 			$('#add-datepicker').data('DateTimePicker').clear();
 			event.target.cost.value = "";
-			event.target.time.value = "";
+			event.target.timeStarts.value = "";
+			event.target.timeEnds.value = "";
 			event.target.fbLink.value = "";
 			event.target.photo_edit.value = "";
 
@@ -582,7 +586,7 @@ if (Meteor.isServer){
 					name: NonEmptyString,
 					type: Match.Where(function(x){
 								check(x, String);
-								return x === "milonga" || x === "event" || x === "practica";
+								return x === "milonga" || x === "evento" || x === "practica";
 							}),
 					description: NonEmptyString,
 					address: NonEmptyString,
@@ -590,7 +594,8 @@ if (Meteor.isServer){
 								return Match.test(x, Date) && moment(x) >= moment.utc().utcOffset("-03:00").startOf('day');
 							}),
 					cost: NonEmptyString,
-					time: NonEmptyString,
+					timeStarts: NonEmptyString,
+					timeEnds: NonEmptyString,
 					fbLink: UrlMatch,
 					picPublicId: CloudinaryPublicIdMatch,
 					keepPublication: Match.Where(function(x){return Match.test(x, Boolean);})
@@ -605,7 +610,8 @@ if (Meteor.isServer){
 				address: pub['address'],
 				date: pub['date'],
 				cost: pub['cost'],
-				time: pub['time'],
+				timeStarts: pub['timeStarts'],
+				timeEnds: pub['timeEnds'],
 				fbLink: pub['fbLink'],
 				picPublicId: pub['picPublicId'],
 				upvotes: [],
@@ -627,7 +633,8 @@ if (Meteor.isServer){
 						address: pub['address'],
 						date: moment(pub['date']).add(7*i, 'days').toDate(),
 						cost: pub['cost'],
-						time: pub['time'],
+						timeStarts: pub['timeStarts'],
+						timeEnds: pub['timeEnds'],
 						fbLink: pub['fbLink'],
 						picPublicId: pub['picPublicId'],
 						upvotes: [],
@@ -684,7 +691,7 @@ if (Meteor.isServer){
 					name: NonEmptyString,
 					type: Match.Where(function(x){
 								check(x, String);
-								return x === "milonga" || x === "event" || x === "practica";
+								return x === "milonga" || x === "evento" || x === "practica";
 							}),
 					description: NonEmptyString,
 					address: NonEmptyString,
@@ -692,7 +699,8 @@ if (Meteor.isServer){
 								return Match.test(x, Date) && moment(x) >= moment.utc().utcOffset("-03:00").startOf('day');
 							}),
 					cost: NonEmptyString,
-					time: NonEmptyString,
+					timeStarts: NonEmptyString,
+					timeEnds: NonEmptyString,
 					fbLink: UrlMatch,
 					picPublicId: CloudinaryPublicIdMatch
 				});
@@ -705,7 +713,8 @@ if (Meteor.isServer){
 															address: newPub['address'],
 															date: newPub['date'],
 															cost: newPub['cost'],
-															time: newPub['time'],
+															timeStarts: newPub['timeStarts'],
+															timeEnds: newPub['timeEnds'],
 															fbLink: newPub['fbLink'],
 															picPublicId: newPub['picPublicId']
 														 } 
@@ -740,7 +749,8 @@ if (Meteor.isServer){
 						address: oldPubs[i].address,
 						date: moment(OldPubs[i].date).add(7*4, 'days').toDate(),
 						cost: oldPubs[i].cost,
-						time: oldPubs[i].time,
+						timeStarts: oldPubs[i].timeStarts,
+						timeEnds: oldPubs[i].timeEnds,
 						fbLink: oldPubs[i].fbLink,
 						picPublicId: oldPubs[i].picPublicId,
 						upvotes: oldPubs[i].upvotes,
