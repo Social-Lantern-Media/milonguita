@@ -7,7 +7,7 @@
 </head>
 
 <body>
-	<header id="header" class="navbar-fixed-top">
+	<header id="header" class="navbar-fixed-top" role="navigation">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-4 text-left">
@@ -15,7 +15,19 @@
 					<h1 id="brand-small" class="main-title" style="display:none;">TVM</h1>
 				</div>
 				<div class="col-md-8 text-right controls {{#if hideCalendar}}hide{{/if}}">
+					{{#if existsPreviousWeek}}
 
+							<button class="previous-week btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</button>
+
+					{{/if}}
+					{{#if existsNextWeek}}
+
+							<button class="next-week btn btn-default">Semana siguiente <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+
+					{{/if}}
+				</div>
+				<div class="col-md-8 col-md-offset-4 text-right controls2 {{#if hideCalendar}}hide{{/if}}" style="margin-top:10px;">
+					
 						{{#unless currentUser}}
 							<button id="facebook-login" class="fb-login btn btn-default">Ingresar con Facebook</button>
 						{{else}}
@@ -32,17 +44,14 @@
 
 
 						<button class="show-about btn btn-default">Sobre TVM</button>
-
-					{{#if existsPreviousWeek}}
-
-							<button class="previous-week btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</button>
-
-					{{/if}}
-					{{#if existsNextWeek}}
-
-							<button class="next-week btn btn-default">Semana siguiente <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
-
-					{{/if}}
+				</div>
+				<div class="col-md-offset-8 controls-small">
+					<button type="button" class="nav-small" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar-small"></span>
+						<span class="icon-bar-small"></span>
+						<span class="icon-bar-small"></span>
+					</button>
 				</div>
 			</div>
 		</div>
@@ -105,18 +114,22 @@
 	<script>
 		$(document).ready(function(){
 			$(window).scroll(function(){
-				if ($(document).scrollTop() > 100){
-					$('#header').css('height', '100px');
-					$('body').css('padding-top', '230px');
-					$('.controls').css('margin-top', '20px');
+				if ($(document).scrollTop() > 50){
+					$('#header').css('height', '80px');
+					$('body').css('padding-top', '120px');
 					$('#brand').hide();
 					$('#brand-small').show();
+					$('.controls').hide();
+					$('.controls2').hide();
+					$('.controls-small').show();
 				}else{
 					$('header').css('height', '300px');
 					$('body').css('padding-top', '300px');
-					$('.controls').css('margin-top', '245px');
 					$('#brand-small').hide();
 					$('#brand').show();
+					$('.controls-small').hide();
+					$('.controls').show();
+					$('.controls2').show();
 				}
 			});
 		});

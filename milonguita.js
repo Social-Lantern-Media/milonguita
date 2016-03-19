@@ -253,6 +253,9 @@ if (Meteor.isClient) {
 			event.preventDefault();			
 			
 			Session.set("showPubForm", true);
+
+			// Hide the controls and shrink the header.
+			header_shrink();
 		},
 		"click #brand": function(event){
 			if (Session.get("showPubForm")){
@@ -271,7 +274,10 @@ if (Meteor.isClient) {
 			}
 		},
 		"click .show-about": function(){
-			Session.get("showAbout") ? Session.set("showAbout", false) : Session.set("showAbout", true);
+			Session.set("showAbout", true);
+
+			// Remove the controls and shrink the header.
+			header_shrink(); 
 		}		
 	});
 
@@ -284,6 +290,9 @@ if (Meteor.isClient) {
 
 			delete Session.keys.profile_pics;
 			delete Session.keys.num_profile_pics;
+			
+			// Make the controls available and expand the header.
+			header_expand();
 		},
 		"click .upvote":function(event){
 			event.preventDefault();	
@@ -308,6 +317,9 @@ if (Meteor.isClient) {
 			}else{
 				Session.set("showEditPubForm", true);
 				Session.set("showEditPubFormId", this._id);
+
+				// Remove the controls and shrink the header.
+				header_shrink();
 			}
 		},
 		"click .pub-info": function(event){
@@ -315,6 +327,9 @@ if (Meteor.isClient) {
 
 			Session.set('showPubInfo', true);
 			Session.set('showPubInfoId', this._id);
+
+			// Remove the controls and shrink the header.
+			header_shrink();
 
 			if (Meteor.user()){
 				Meteor.call("getFBFriends", Session.get('showPubInfoId'), function(err, res){				
@@ -334,6 +349,9 @@ if (Meteor.isClient) {
 			event.preventDefault();
 
 			Session.set("showPubForm", false);
+
+			// Make the controls available and expand the header.
+			header_expand();
 		},
 		"change input[type='file']": function(e){
 			// Check if the value in the input is an image, if it is make the request to Cloudinary.
@@ -418,6 +436,9 @@ if (Meteor.isClient) {
 			Session.set("showEditPubForm", false);
 			Session.set("showEditPubFormId", "");
 			delete Session.keys.showEditPubFormId;
+
+			// Make the controls available and expand the header.
+			header_expand();
 		},
 		"change input[type='file']": function(e){
 			// Check if the value in the input is an image, if it is make the request to Cloudinary.
@@ -496,6 +517,9 @@ if (Meteor.isClient) {
 	Template.aboutSection.events({
 		"click .close-about": function(){
 			Session.set("showAbout", false);
+
+			// Make the controls available and expand the header.
+			header_expand();
 		}
 	});
 
@@ -917,4 +941,26 @@ if (Meteor.isServer) {
 }
 
 if (Meteor.isClient){
-	}
+	// Global function to make the header shrink.
+	header_shrink = function(){
+		$('#header').css('height', '80px');
+		$('body').css('padding-top', '120px');
+		$('#brand').hide();
+		$('#brand-small').show();
+		$('.controls').hide();
+		$('.controls2').hide();
+		$('.controls-small').show();
+	};
+
+	// Global function to make the header expand.
+	header_expand = function(){
+		$('header').css('height', '300px');
+		$('body').css('padding-top', '300px');
+		$('#brand-small').hide();
+		$('#brand').show();
+		$('.controls-small').hide();
+		$('.controls').show();
+		$('.controls2').show();
+		$(document).scrollTop(0);
+	};
+}
