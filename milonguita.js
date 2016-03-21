@@ -257,7 +257,7 @@ if (Meteor.isClient) {
 			// Hide the controls and shrink the header.
 			header_shrink();
 		},
-		"click #brand": function(event){
+		"click .brand": function(event){
 			if (Session.get("showPubForm")){
 				Session.set("showPubForm", false);
 			}
@@ -949,7 +949,7 @@ if (Meteor.isClient){
 		$('#brand-small').show();
 		$('.controls').hide();
 		$('.controls2').hide();
-		$('.controls-small').show();
+		$('.controls-small').hide();
 	};
 
 	// Global function to make the header expand.

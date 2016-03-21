@@ -11,8 +11,8 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-4 text-left">
-					<h1 id="brand" class="main-title">Te vas de <br/> &nbsp; &nbsp; milonga</h1>
-					<h1 id="brand-small" class="main-title" style="display:none;">TVM</h1>
+					<h1 id="brand" class="main-title brand">Te vas de <br/> &nbsp; &nbsp; milonga</h1>
+					<h1 id="brand-small" class="main-title brand" style="display:none;">TVM</h1>
 				</div>
 				<div class="col-md-8 text-right controls {{#if hideCalendar}}hide{{/if}}">
 					{{#if existsPreviousWeek}}
@@ -45,13 +45,45 @@
 
 						<button class="show-about btn btn-default">Sobre TVM</button>
 				</div>
-				<div class="col-md-offset-8 controls-small">
-					<button type="button" class="nav-small" aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar-small"></span>
-						<span class="icon-bar-small"></span>
-						<span class="icon-bar-small"></span>
-					</button>
+				<div class="col-md-offset-8 controls-small {{#if hideCalendar}}hide{{/if}}">
+					<div class="dropdown pull-right">
+						<button type="button" class="nav-small dropdown-toggle" id="ddm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar-small"></span>
+							<span class="icon-bar-small"></span>
+							<span class="icon-bar-small"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="ddm">
+						 <li>
+							{{#if existsPreviousWeek}}
+								<a href="#" class="previous-week"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</a>
+							{{/if}}
+						 </li>
+						 <li>
+							{{#if existsNextWeek}}
+								<a href="#" class="next-week">Semana siguiente <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+							{{/if}}
+						 </li>
+						 <li>
+							{{#if currentUser}}		
+								{{#unless showPubForm }}
+									<a href="#" class="show-pub-form"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicacion</a>							
+								{{/unless}}
+							{{/if}}
+						 </li>
+						 <li>
+							<a href="#" class="show-about">Sobre TVM</a>
+						 </li>
+						 <li role="separator" class="divider"></li>
+ 			  			 <li>
+							{{#unless currentUser}}
+								<a id="facebook-login" href="#" class="fb-login">Ingresar con Facebook</a>
+							{{else}}
+								<a id="logout" class="fb-login" href="#">Salir</a>
+							{{/unless}}
+						 </li>
+					  </ul>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -122,7 +154,9 @@
 					$('.controls').hide();
 					$('.controls2').hide();
 					$('.controls-small').show();
+					$('.calendar').css('margin-top', '60px');
 				}else{
+					if ($('.controls-small').css('display') != 'none'){
 					$('header').css('height', '300px');
 					$('body').css('padding-top', '300px');
 					$('#brand-small').hide();
@@ -130,6 +164,8 @@
 					$('.controls-small').hide();
 					$('.controls').show();
 					$('.controls2').show();
+					$('.calendar').css('margin-top', '20px');
+					}
 				}
 			});
 		});
