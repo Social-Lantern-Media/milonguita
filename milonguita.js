@@ -57,6 +57,12 @@ if (Meteor.isClient) {
 	Meteor.subscribe("userData");
 	
 	Template.body.helpers({
+		navxs: function (){
+			return ($(window).width() < 992);
+		},
+		navmd: function (){
+			return ($(window).width() >= 992);
+		},
 		publications: function (){
 			// Show newest publications at the top
 			return Publications.find({}, {sort: {createdAt: -1}});
@@ -232,6 +238,13 @@ if (Meteor.isClient) {
 					throw new Meteor.Error("Logout failed!");
 				}
 			});
+		},
+		"click .close-menu-xs": function(event){
+			event.preventDefault();
+
+			// Close the menu-xs.
+			$('#menu-xs').removeClass('in');
+			$('#menu-xs').attr('aria-expanded', 'false');
 		},
 		"click .delete-old-pubs": function(event){
 			event.preventDefault();
@@ -950,6 +963,7 @@ if (Meteor.isClient){
 		$('.controls').hide();
 		$('.controls2').hide();
 		$('.controls-small').hide();
+		$('.calendar').css('margin-top', '60px');
 	};
 
 	// Global function to make the header expand.
@@ -959,8 +973,14 @@ if (Meteor.isClient){
 		$('#brand-small').hide();
 		$('#brand').show();
 		$('.controls-small').hide();
-		$('.controls').show();
-		$('.controls2').show();
+		if ($(window).width() >= 992){
+			$('.controls').show();
+			$('.controls2').show();
+		}else{
+			$('#menu-xs').removeClass('in');
+			$('#menu-xs').attr('aria-expanded', 'false');
+		}
+		$('.calendar').css('margin-top', '20px');
 		$(document).scrollTop(0);
 	};
 }

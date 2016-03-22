@@ -147,6 +147,29 @@ body{
 	display: none;
 }
 
+.dropdown-small{
+	display: none;
+}
+	
+.dropdown-xs{
+	display: block;
+}
+
+.dropdown-xs-bg{
+	background-color:rgba(0,0,0,0.9);
+	color:white;
+}
+
+.navbar-nav > li > a, .navbar-nav > li > a:hover, .navbar-nav > li > a:focus{
+	color: white;
+	text-decoration:none;
+	background-color:transparent;
+}
+
+.nav > li{
+	margin:10px 0;
+}
+
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 992px) { 
 	.info-xs{
@@ -172,5 +195,13 @@ body{
 	.box{
 		margin-top:0;
 		margin-bottom:0;
+	}
+
+	.dropdown-small{
+		display:block;
+	}
+
+	.dropdown-xs{
+		display:none;
 	}
 }
