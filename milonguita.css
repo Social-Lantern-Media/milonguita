@@ -35,18 +35,30 @@ body{
 }
 
 .controls{
-	margin-top:210px;	
-	-webkit-transition: all 0.4s ease;
-   transition: all 0.4s ease;
+	display:none;
 }
 
-.day{
-	border-bottom: 1px solid black;
+.controls2{
+	display:none;
 }
 
 .box{
 	border: 1px solid rgb(214, 214, 214);
 	background-color:white;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.info-xs{
+	display:block;
+}
+
+.info-md{
+	display:none;
+}
+
+.day{
+	border-bottom: 1px solid black;
 }
 
 .day-grid{
@@ -67,11 +79,8 @@ body{
 }
 
 .info{
+	
 	border: 1px solid #eee;
-}
-
-.info-margin{
-	margin: 10px;
 }
 
 .about{
@@ -136,4 +145,32 @@ body{
 
 .controls-small{
 	display: none;
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+	.info-xs{
+		display:none;
+	}
+
+	.info-md{
+		display:block;
+		margin: 10px;
+	}
+
+	.controls{
+		display: block;
+		margin-top:210px;	
+		-webkit-transition: all 0.4s ease;
+		transition: all 0.4s ease;
+	}
+	
+	.controls2{
+		display: block;
+	}
+
+	.box{
+		margin-top:0;
+		margin-bottom:0;
+	}
 }
