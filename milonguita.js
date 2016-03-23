@@ -978,6 +978,7 @@ if (Meteor.isClient){
 		$('.controls').hide();
 		$('.controls2').hide();
 		$('.controls-small').hide();
+		$('.subtitle-div').hide();
 		$('.calendar').css('margin-top', '60px');
 	};
 
@@ -988,6 +989,7 @@ if (Meteor.isClient){
 		$('#brand-small').hide();
 		$('#brand').show();
 		$('.controls-small').hide();
+		$('.subtitle-div').show();
 		if ($(window).width() >= 992){
 			$('.controls').show();
 			$('.controls2').show();

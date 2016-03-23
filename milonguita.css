@@ -1,3 +1,7 @@
+.t1{
+	font-family: 'Dancing Script', cursive;
+}
+
 body{
 	padding-top:300px;
 	-webkit-transition: all 0.4s ease;
@@ -113,8 +117,17 @@ body{
 }
 
 .main-title{
-	font-family: 'Frijole', cursive;
-	font-size:46px;
+	font-family: 'Dancing Script', cursive;
+	font-size:50px;
+}
+
+#brand-small{
+	margin-top:10px;
+}
+
+.subtitle{
+	margin-top:50px;
+	font-family: 'Source Serif Pro', serif;
 }
 
 .shrink{
@@ -210,5 +223,14 @@ body{
 
 	.dropdown-xs{
 		display:none;
+	}
+
+	.main-title{
+		font-size:78px;
+	}
+
+	.subtitle{
+		margin-top:0;
+		display:block;
 	}
 }
