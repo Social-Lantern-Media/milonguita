@@ -170,6 +170,13 @@ body{
 	margin:10px 0;
 }
 
+.separator{
+	height: 1px;
+	margin:9px 0;
+	overflow:hidden;
+	background-color:white;
+}
+
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 992px) { 
 	.info-xs{

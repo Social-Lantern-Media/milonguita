@@ -31,7 +31,7 @@
 						{{#unless currentUser}}
 							<button id="facebook-login" class="fb-login btn btn-default">Ingresar con Facebook</button>
 						{{else}}
-							<button id="logout" class="fb-login btn btn-default">Salir</button>
+							<button id="logout" class="fb-login btn btn-default">{{currentUser.services.facebook.name}} - Salir</button>
 						{{/unless}}						
 
 						{{#if currentUser}}		
@@ -79,13 +79,13 @@
 							{{#unless currentUser}}
 								<a id="facebook-login" href="#" class="fb-login">Ingresar con Facebook</a>
 							{{else}}
-								<a id="logout" class="fb-login" href="#">Salir</a>
+								<a id="logout" class="fb-login" href="#">{{currentUser.services.facebook.name}} - Salir</a>
 							{{/unless}}
 						 </li>
 					  </ul>
 					</div>
 					<div class="dropdown-xs pull-right">
-						<button type="button" class="navbar-toggle collapsed nav-small" data-toggle="collapse" data-target="#menu-xs" aria-expanded="false">
+						<button type="button" id="btn-menu-xs" class="navbar-toggle collapsed nav-small" data-toggle="collapse" data-target="#menu-xs" aria-expanded="false">
 							<span class="sr-only">Toggle navigation</span>
 							<span class="icon-bar-small"></span>
 							<span class="icon-bar-small"></span>
@@ -95,7 +95,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="container-fluid dropdown-xs dropdown-xs-bg">
+		<div id="menu-xs-bg" class="container-fluid dropdown-xs">
 			<div class="col-xs-12">
 				<div class="collapse navbar-collapse" id="menu-xs">
 					<ul class="nav navbar-nav text-center">
@@ -103,9 +103,10 @@
 							{{#unless currentUser}}
 								<a id="facebook-login" href="#" class="fb-login">Ingresar con Facebook</a>
 							{{else}}
-								<a id="logout" class="fb-login" href="#">Salir</a>
+								<a id="logout" class="fb-login" href="#">{{currentUser.services.facebook.name}} - Salir</a>
 							{{/unless}}
 						 </li>
+						<li class="separator" role="separator"></li>
 						{{#if existsPreviousWeek}}							
 							<li>
 								<a href="#" class="previous-week"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</a>
@@ -126,6 +127,7 @@
 						<li>
 							<a href="#" class="show-about">Sobre TVM</a>
 						</li>
+						<li class="separator" role="separator"></li>
 						<li>
 							<a href="#" class="close-menu-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cerrar Menu</a>
 						</li>
@@ -218,6 +220,17 @@
 						$('.calendar').css('margin-top', '20px');
 					}
 				}
+			});
+
+			$('#btn-menu-xs').on("click", function(event){
+				event.preventDefault();
+
+				if ($('#menu-xs').hasClass('in')){
+					$('#menu-xs-bg').removeClass('dropdown-xs-bg');					
+				}else{
+					$('#menu-xs-bg').addClass('dropdown-xs-bg');					
+				}
+				 
 			});
 		});
 	</script>

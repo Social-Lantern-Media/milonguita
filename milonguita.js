@@ -245,6 +245,9 @@ if (Meteor.isClient) {
 			// Close the menu-xs.
 			$('#menu-xs').removeClass('in');
 			$('#menu-xs').attr('aria-expanded', 'false');
+
+			// Remove the menu background color.
+			$('#menu-xs-bg').removeClass('dropdown-xs-bg');
 		},
 		"click .delete-old-pubs": function(event){
 			event.preventDefault();
@@ -269,6 +272,9 @@ if (Meteor.isClient) {
 
 			// Hide the controls and shrink the header.
 			header_shrink();
+
+			// Scroll to the top.
+			$(document).scrollTop(0);
 		},
 		"click .brand": function(event){
 			if (Session.get("showPubForm")){
@@ -285,6 +291,9 @@ if (Meteor.isClient) {
 			if (Session.get("showAbout")){
 				Session.set("showAbout", false);
 			}
+
+			// Scroll to top.
+			$(document).scrollTop(0);
 		},
 		"click .show-about": function(){
 			Session.set("showAbout", true);
@@ -333,6 +342,9 @@ if (Meteor.isClient) {
 
 				// Remove the controls and shrink the header.
 				header_shrink();
+
+				// Scroll to the top.
+				$(document).scrollTop(0);
 			}
 		},
 		"click .pub-info": function(event){
@@ -343,6 +355,9 @@ if (Meteor.isClient) {
 
 			// Remove the controls and shrink the header.
 			header_shrink();
+
+			// Scroll to the top.
+			$(document).scrollTop(0);
 
 			if (Meteor.user()){
 				Meteor.call("getFBFriends", Session.get('showPubInfoId'), function(err, res){				
