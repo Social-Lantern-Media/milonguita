@@ -74,6 +74,10 @@ body{
 	border-color:blue;
 }
 
+.error{
+	color:red;
+}
+
 .add {
 	border: 1px solid #eee;
 }
@@ -83,7 +87,6 @@ body{
 }
 
 .info{
-	
 	border: 1px solid #eee;
 }
 
@@ -119,6 +122,13 @@ body{
 .main-title{
 	font-family: 'Dancing Script', cursive;
 	font-size:50px;
+	cursor: pointer;
+}
+
+.main-title-sm{		
+	font-family: 'Dancing Script', cursive;
+	font-size:55px;
+	cursor: pointer;
 }
 
 #brand-small{
@@ -232,5 +242,13 @@ body{
 	.subtitle{
 		margin-top:0;
 		display:block;
+	}
+
+	.title-add{
+		margin-bottom:20px;
+	}
+
+	.title-edit{
+		margin-bottom:20px;
 	}
 }

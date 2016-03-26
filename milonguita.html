@@ -14,7 +14,7 @@
 			<div class="row">
 				<div class="col-xs-9 col-md-8 text-left">
 					<h1 id="brand" class="t1 main-title brand">Te Vas de <br/> &nbsp; &nbsp; Milonga</h1>
-					<h1 id="brand-small" class="main-title brand" style="display:none;">TVM</h1>
+					<h1 id="brand-small" class="main-title-sm brand" style="display:none;">TVM</h1>
 				</div>
 				<div class="col-md-4 text-right controls {{#if hideCalendar}}hide{{/if}}">
 					{{#if existsPreviousWeek}}
@@ -239,6 +239,11 @@
 				}
 				 
 			});
+
+			// Initialize tooltips.
+			$(function() {
+				$('[data-toggle="tooltip"]').tooltip();
+			});
 		});
 	</script>
 </body>
@@ -413,7 +418,7 @@
 
 <template name="addPublication">
 	<div class="col-md-12 add {{#unless showPubForm }}hide{{/unless}}">
-		<div class="col-md-10 text-center"><h2>Agregar una nueva publicacion</h2></div>
+		<div class="col-md-10 text-center title-add"><h2>Agregar una nueva publicacion</h2></div>
 		<div class="col-md-2" style="margin-top:25px;">
 			<button class="close-addPub btn btn-default">Cerrar &nbsp; <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 		</div>
@@ -422,14 +427,14 @@
 				<div class="col-md-6">
 				<div class="col-md-12">
 				<div class="form-group">
-					<label for="addPubName" class="col-sm-2 control-label">Nombre:</label>
+					<label for="addPubName" class="col-sm-2 control-label">*Nombre:</label>
 					<div class="col-sm-10">
 						<input id="addPubName" type="text" name="name" class="required form-control" />
-						<span class="help-block">A block of help text that breaks onto a new line and may extend beyond one line.</span>
+						<span class="help-block">Nombre de la milonga\practica. (Maximo 25 caracteres)</span>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="addPubType" class="col-sm-2 control-label">Tipo de publicacion:</label>				
+					<label for="addPubType" class="col-sm-2 control-label">*Tipo: </label>
 					<div class="col-sm-10">
 						<select id="addPubType" name="type" class="required form-control">
 						  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
@@ -439,25 +444,27 @@
 					</div>
 				</div>	
 				<div class="form-group">
-					<label for="addPubAddress" class="col-sm-2 control-label">Direccion:</label>
+					<label for="addPubAddress" class="col-sm-2 control-label">*Direccion: </label>
 					<div class="col-sm-10">				
 						<input id="addPubAddress" type="text" name="address" class="required form-control" />
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="addPubCost" class="col-sm-2 control-label">Costo:</label>
+					<label for="addPubCost" class="col-sm-2 control-label">*Costo:</label>
 					<div class="col-sm-10">				
 						<input id="addPubCost" type="text" name="cost" class="required form-control" />
+						<span class="help-block">Costo de la entrada. Ej: 80, 100, Gratis. </span>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="addPubTimeStarts" class="col-sm-2 control-label">Hora de comienzo:</label>
+					<label for="addPubTimeStarts" class="col-sm-2 control-label">*Comienza:</label>
 					<div class="col-sm-10">				
 						<input id="addPubTimeStarts" type="text" name="timeStarts" class="required form-control" />
+						<span class="help-block">Hora de comienzo. Ej: 21:00, 19:00.</span>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="addPubTimeEnds" class="col-sm-2 control-label">Hora de cierre:</label>
+					<label for="addPubTimeEnds" class="col-sm-2 control-label">*Finaliza:</label>
 					<div class="col-sm-10">				
 						<input id="addPubTimeEnds" type="text" name="timeEnds" class="required form-control" />
 					</div>
@@ -465,11 +472,12 @@
 				<div class="form-group">
 					<label for="addPubFBLink" class="col-sm-2 control-label">Facebook link:</label>
 					<div class="col-sm-10">				
-						<input id="addPubFBLink" type="text" name="fbLink" class="required url form-control" />
+						<input id="addPubFBLink" type="text" name="fbLink" class="url form-control" />
+						<span class="help-block">Copiar aqui el link de la publicacion de facebook de la milonga\practica\evento que se esta creando.<br/> (Este campo no es obligatorio)</span>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="photo_add" class="col-sm-2 control-label">Subir imagen:</label>					
+					<label for="photo_add" class="col-sm-2 control-label">*Imagen:</label>					
 					<div class="col-sm-10">
 						<input type="file" id="photo_add" name="photo_add" class="form-control" accept="image/*"/>
 					</div>
@@ -479,15 +487,15 @@
 				<div class="col-md-6">
 				<div class="col-md-12">
 				<div class="form-group">
-					<label for="add-datepicker" class="col-sm-2 control-label">Fecha:</label>
+					<label for="add-datepicker" class="col-sm-2 control-label">*Fecha:</label>
 					<div class="col-sm-6 col-sm-offset-2">				
 						<input id="add-datepicker" name="date" class="required date form-control" type="hidden" />
 					</div>
 				</div>														
 				<div class="form-group">
-					<label for="addPubDesc" class="col-sm-12 text-left">Descripcion: </label>
+					<label for="addPubDesc" class="col-sm-12 text-left">*Descripcion:</label>
 					<div class="col-sm-12">
-						<span class="help-block">A block of help text that breaks onto a new line and may extend beyond one line</span>				
+						<span class="help-block">Aqui puedes agregar mas informacion sobre tu publicacion. <br/> p.e: DJ, exhibiciones, aclaraciones acerca del costo o el horario.</span>				
 						<textarea id="addPubDesc" name="description" class="required form-control" rows="7" ></textarea>
 					</div>
 				</div>
@@ -497,6 +505,7 @@
 							<label>
 								<input type="checkbox" name="keepPublication" /> Mantener publicacion.
 							</label>
+							<span class="glyphicon glyphicon-question-sign" style="font-size:20px;" data-toggle="tooltip" data-placement="right" title="En caso de marcar esta opcion, esta publicacion se mantendra en el sistema, apareciendo cada semana en el mismo dia para el cual fue creada." aria-hidden="true"></span>
 						</div>
 					</div>
 				</div>
@@ -515,7 +524,7 @@
 
 <template name="editPublication">
 	<div class="col-md-12 edit {{#unless showEditPubForm }}hide{{/unless}}">
-		<div class="col-md-12">
+		<div class="col-md-12 title-edit">
 			<div class="col-md-10 text-center"><h2>Editar una publicacion</h2></div>
 			<div class="col-md-2" style="margin-top:25px;">
 				<button class="close-editPub btn btn-default">Cerrar &nbsp; <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
@@ -529,13 +538,14 @@
 							<input type="hidden" name="id"  class="required" value="{{editInfo._id}}" />
 						</div>							
 						<div class="form-group">
-							<label for="editPubName" class="col-sm-2 control-label">Nombre:</label>							
+							<label for="editPubName" class="col-sm-2 control-label">*Nombre:</label>
 							<div class="col-sm-10">				
 								<input id="editPubName" type="text" name="name" class="required form-control" value="{{editInfo.name}}" />
+								<span class="help-block">Nombre de la milonga\practica. (Maximo 25 caracteres)</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="editPubType" class="col-sm-2 control-label">Tipo de publicacion:</label>							
+							<label for="editPubType" class="col-sm-2 control-label">*Tipo:</label>							
 							<div class="col-sm-10">				
 								<select id="editPubType" name="type" class="required form-control">
 								  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
@@ -545,25 +555,27 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="editPubAddress" class="col-sm-2 control-label">Direccion:</label>
+							<label for="editPubAddress" class="col-sm-2 control-label">*Direccion:</label>
 							<div class="col-sm-10">				
 								<input id="editPubAddress" type="text" name="address" class="required form-control" value="{{editInfo.address}}" />
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="editPubCost" class="col-sm-2 control-label">Costo:</label>
+							<label for="editPubCost" class="col-sm-2 control-label">*Costo:</label>
 							<div class="col-sm-10">				
 								<input id="editPubCost" type="text" name="cost" class="required form-control" value="{{editInfo.cost}}" />
+								<span class="help-block">Costo de la entrada. Ej: 80, 100, Gratis. </span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="editPubTimeStarts" class="col-sm-2 control-label">Hora de comienzo:</label>							
+							<label for="editPubTimeStarts" class="col-sm-2 control-label">*Comienza:</label>							
 							<div class="col-sm-10">				
 								<input id="editPubTimeStarts" type="text" name="timeStarts" class="required form-control" value="{{editInfo.timeStarts}}" />
+								<span class="help-block">Hora de comienzo. Ej: 21:00, 19:00.</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="editPubTimeEnds" class="col-sm-2 control-label">Hora de cierre:</label>							
+							<label for="editPubTimeEnds" class="col-sm-2 control-label">*Finaliza:</label>							
 							<div class="col-sm-10">				
 								<input id="editPubTimeEnds" type="text" name="timeEnds" class="required form-control" value="{{editInfo.timeEnds}}" />
 							</div>
@@ -571,11 +583,12 @@
 						<div class="form-group">
 							<label for="editPubFBLink" class="col-sm-2 control-label">Facebook link:</label>
 							<div class="col-sm-10">
-								<input id="editPubFBLink" type="text" name="fbLink" class="required url form-control" value="{{editInfo.fbLink}}" />
+								<input id="editPubFBLink" type="text" name="fbLink" class="url form-control" value="{{editInfo.fbLink}}" />
+								<span class="help-block">Copiar aqui el link de la publicacion de facebook de la milonga\practica\evento que se esta creando.<br/> (Este campo no es obligatorio)</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="photo_edit" class="col-sm-2 control-label">Subir imagen:</label>
+							<label for="photo_edit" class="col-sm-2 control-label">*Imagen:</label>
 							<div class="col-sm-10">
 								<input type="file" id="photo_edit" name="photo" class="form-control" accept="image/*"/>
 							</div>
@@ -585,15 +598,16 @@
 				<div class="col-md-6">
 					<div class="col-md-12">						
 						<div class="form-group">
-							<label for="edit-datepicker" class="col-sm-2 control-label">Fecha:</label>
+							<label for="edit-datepicker" class="col-sm-2 control-label">*Fecha:</label>
 							<div class="col-sm-6 col-sm-offset-2">				
 								<input id="edit-datepicker" name="date" class="required date form-control" type="hidden" />
 							</div>
 						</div>																
 						<div class="form-group">
-							<label for="editPubDesc" class="col-sm-12 text-left">Descripcion: </label>
+							<label for="editPubDesc" class="col-sm-12 text-left">*Descripcion: </label>
 							<div class="col-sm-12">				
 								<textarea id="editPubDesc" name="description" class="required form-control" rows="7" value="{{editInfo.description}}" ></textarea>
+								<span class="help-block">Aqui puedes agregar mas informacion sobre tu publicacion. <br/> p.e: DJ, exhibiciones, aclaraciones acerca del costo o el horario.</span>
 							</div>
 						</div>
 					</div>

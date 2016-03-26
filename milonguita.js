@@ -566,12 +566,49 @@ if (Meteor.isClient) {
 		// Make client-side validation available
 		$('.new-publication').validate({
 			rules: {
+				name: {
+					maxlength: 25
+				},
 				photo_add: {
 					accept: "image/*",
 					extension: "png|jpe?g|gif"
 				}
+			},
+			messages: {
+				name: {
+					required: "El campo Nombre no puede estar vacio.",
+					maxlength: "El campo Nombre no puede tener mas de 25 caracteres."
+				},
+				type: {
+					required: "El campo Tipo no puede estar vacio."
+				},
+				address: {
+					required: "El campo Direccion no puede estar vacio."
+				},
+				cost: {
+					required: "El campo Costo no puede estar vacio."
+				},
+				timeStarts: {
+					required: "El campo Comienza no puede estar vacio."
+				},
+				timeEnds: {
+					required: "El campo Finaliza no puede estar vacio."
+				},
+				fbLink: {
+					url: "La URL ingresada no es valida."
+				},
+				photo_add: {
+					accept: "El archivo elegido no es una imagen.",
+					extension: "El archivo elegido no es una imagen."
+				},
+				date: {
+					required: "El campo Fecha no puede estar vacio."
+				},
+				description: {
+					required: "El campo Descripcion no puede estar vacio."
+				}
 			}
-		});
+		});			
 	};
 
 	Template.editPublication.rendered = function (){
@@ -595,12 +632,49 @@ if (Meteor.isClient) {
 		// Make client-side validation available
 		$('.edit-publication').validate({
 			rules: {
-				photo_edit: {
+				name: {
+					maxlength: 25
+				},
+				photo: {
 					accept: "image/*",
 					extension: "png|jpe?g|gif"
 				}
+			},
+			messages: {
+				name: {
+					required: "El campo Nombre no puede estar vacio.",
+					maxlength: "El campo Nombre no puede tener mas de 25 caracteres."
+				},
+				type: {
+					required: "El campo Tipo no puede estar vacio."
+				},
+				address: {
+					required: "El campo Direccion no puede estar vacio."
+				},
+				cost: {
+					required: "El campo Costo no puede estar vacio."
+				},
+				timeStarts: {
+					required: "El campo Comienza no puede estar vacio."
+				},
+				timeEnds: {
+					required: "El campo Finaliza no puede estar vacio."
+				},
+				fbLink: {
+					url: "La URL ingresada no es valida."
+				},
+				photo: {
+					accept: "El archivo elegido no es una imagen.",
+					extension: "El archivo elegido no es una imagen."
+				},
+				date: {
+					required: "El campo Fecha no puede estar vacio."
+				},
+				description: {
+					required: "El campo Descripcion no puede estar vacio."
+				}
 			}
-		});
+		});			
 	};
 }
 
