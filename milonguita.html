@@ -28,10 +28,10 @@
 
 					{{/if}}
 				</div>
-				<div class="col-xs-12 col-md-7 subtitle-div">
+				<div class="col-xs-12 col-md-6 subtitle-div">
 					<h3 class="subtitle">Toda la informacion sobre las milongas de Uruguay</h3>
 				</div>
-				<div class="col-md-5 text-right controls2 {{#if hideCalendar}}hide{{/if}}" style="margin-top:10px;">
+				<div class="col-md-6 text-right controls2 {{#if hideCalendar}}hide{{/if}}" style="margin-top:10px;">
 					
 						{{#unless currentUser}}
 							<button id="facebook-login" class="fb-login btn btn-default">Ingresar con Facebook</button>
@@ -262,7 +262,7 @@
 				<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Comienza: {{timeStarts}}</p>
 				<p><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> Recomendada: {{upvoteCount}} {{pluralizeVez upvoteCount}}</p>
 			</div>
-			<div class="col-md-12 text-center" style="margin-top:5px;">
+			<div class="col-md-12 text-center" style="margin-top:5px;margin-bottom:10px;">
 				<p>
 					<button class="pub-info btn btn-default">Ver mas</button>
 				</p>
@@ -314,16 +314,40 @@
 				<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> 
 				&nbsp;
 				<span class="">{{pubInfo.upvoteCount}} {{pluralizeUsuario pubInfo.upvoteCount}}</span>
-			</p>	
+			</p>
+			<p class="text-center">
+				{{#if currentUser}}
+					{{#if canUpvote pubInfo.upvotes}}
+						<button class="btn btn-default upvote">
+							 <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> Recomendar
+						</button>
+					{{else}}
+						<button class="btn btn-default cancel-upvote">
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"> Recomendada</span>
+						</button>
+					{{/if}}
+				{{/if}}
+			</p>
+			<p class="pub-info-item">
+				<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 
+				&nbsp;
+				<span class="">Descripcion:</span>
+			</p>
+			<div class="col-xs-12 text-left">
+				<pre>{{pubInfo.description}}</pre>
+			</div>
 		</div>
-		<div class="col-xs-12">
-			*** ACA VA LA PARTE DE RECOMENDAR ***
-		</div>
-		<div class="col-xs-12">
-			*** ACA VA LA DESCRIPCION DE LA PUBLICACION ***
-		</div>
-		<div class="col-xs-12">
-			*** ACA VA LA PARTE DE LOS AMIGOS DE FEACEBOOK ***	
+		<div class="col-xs-12" style="margin-top:10px;">
+			{{#if currentUser}}				
+				<div class="col-xs-12 text-left">
+					{{#unless isEmptyFBFriendsUpvoted}}
+						<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicacion.</p>
+					{{/unless}}
+					{{#each getFBFriendsUpvoted}}
+							<img src="{{url}}" title="{{name}}"/>
+					{{/each}}
+				</div>
+			{{/if}}	
 		</div>
 	</div>
 	<div class="col-md-12 info-md">	
@@ -376,14 +400,33 @@
 					<p class="pub-info-item">
 						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> 
 						&nbsp;
-						<span class="">Recomendado por {{pubInfo.upvoteCount}} {{pluralizeUsuario pubInfo.upvoteCount}} de TVM</span>
+						<span class="">Recomendado por {{pubInfo.upvoteCount}} {{pluralizeUsuario pubInfo.upvoteCount}} de TVM &nbsp; {{#if currentUser}}
+													{{#if canUpvote pubInfo.upvotes}}
+														<button class="btn btn-default upvote">
+															 <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> Recomendar
+														</button>
+													{{else}}
+														<button class="btn btn-default cancel-upvote">
+															<span class="glyphicon glyphicon-ok" aria-hidden="true"> Recomendada</span>
+														</button>
+													{{/if}}
+											{{/if}}
+						</span>
 					</p>
+					<p class="pub-info-item">
+						<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 
+						&nbsp;
+						<span class="">Descripcion: </span>
+					</p>
+					<div class="col-md-12 text-left">
+						<pre class="pre">{{pubInfo.description}}</pre>
+					</div>
 				</div>
 			</div>
 			<div class="col-md-12 text-center" style="margin-top:10px;">
 				{{#if currentUser}}				
 					<div class="col-md-4">
-						<div class="col-md-12">
+						<div class="col-md-12 text-left">
 							{{#unless isEmptyFBFriendsUpvoted}}
 								<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicacion.</p>
 							{{/unless}}
@@ -391,21 +434,8 @@
 									<img src="{{url}}" title="{{name}}"/>
 							{{/each}}
 						</div>
-						<div class="col-md-12" style="margin-top:10px;">
-							{{#if canUpvote pubInfo.upvotes}}
-								<button class="btn btn-default upvote"> <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> Recomendar</button>
-							{{else}}
-								<button class="btn btn-default cancel-upvote"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Recomendada</span></button>
-							{{/if}}
-						</div>
 					</div>
 				{{/if}}
-				<div class="col-md-7 col-md-offset-1">
-					<h4>Descripcion: </h4>
-					<div class="col-md-12 text-left">
-						<p>{{pubInfo.description}}</p>
-					</div>
-				</div>
 			</div>
 			<div class="col-md-12">
 				<div class="col-md-2 col-md-offset-10">

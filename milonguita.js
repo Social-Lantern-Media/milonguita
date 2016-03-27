@@ -105,7 +105,7 @@ if (Meteor.isClient) {
 			return upvoteCount == 1 ? "usuario" : "usuarios";
 		},
 		isEmptyFBFriendsUpvoted: function(){
-			return Session.get("profile_pics") == undefined;
+			return (Session.get("profile_pics") == undefined || Session.get("profile_pics").length == 0);
 		},
 		numFBFriendsUpvoted: function(){
 			return Session.get("num_profile_pics");
@@ -979,10 +979,13 @@ if (Meteor.isServer){
 			for (i = 0; i < intersection.length; i++){
 							var profilePicApiUrl = 'https://graph.facebook.com/v2.5/me/picture?redirect=false&access_token='+ intersection[i].services.facebook.accessToken;
 							var profile_pic_res = apiCallAsync(profilePicApiUrl);
-							profile_pics.push({
-														url:profile_pic_res.data.url,
-														name: intersection[i].services.facebook.name
-													});
+							// Limit the amount of pics to be sent to 20.
+							if (profile_pics.length < 20){
+								profile_pics.push({
+															url:profile_pic_res.data.url,
+															name: intersection[i].services.facebook.name
+														});
+							}
 			}
 			
 			return profile_pics;
