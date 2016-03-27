@@ -21,7 +21,7 @@ body{
 
 #header{
 	height: 300px;
-	background-image:url("/images/bg2.jpg");
+	background-image:url("/images/bg5.jpg");
 	background-size: cover;
 	color: white;
 	-webkit-transition: all 0.4s ease;
@@ -129,6 +129,7 @@ body{
 	font-family: 'Dancing Script', cursive;
 	font-size:55px;
 	cursor: pointer;
+	text-align: left;
 }
 
 #brand-small{
@@ -228,9 +229,17 @@ body{
 
 	.controls{
 		display: block;
-		margin-top:210px;	
+		margin-top: 80px;
 		-webkit-transition: all 0.4s ease;
 		transition: all 0.4s ease;
+	}
+		
+	.btn-header, .btn-header:hover, .btn-header:active, .btn-header:focus{
+		margin-right:50px;
+		color: white;
+		background-color: transparent;
+		font-weight:bold;
+		border-color:white;
 	}
 	
 	.controls2{
@@ -251,7 +260,7 @@ body{
 	}
 
 	.main-title{
-		font-size:78px;
+		font-size:100px;
 	}
 
 	.subtitle{

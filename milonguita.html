@@ -12,45 +12,43 @@
 	<header id="header" class="navbar-fixed-top" role="navigation">
 		<div class="container">
 			<div class="row">
-				<div class="col-xs-9 col-md-8 text-left">
-					<h1 id="brand" class="t1 main-title brand">Te Vas de <br/> &nbsp; &nbsp; Milonga</h1>
-					<h1 id="brand-small" class="main-title-sm brand" style="display:none;">TVM</h1>
+				<div class="col-xs-9 col-md-11 text-center">
+					<h1 id="brand" class="t1 main-title brand">Te Vas de Milonga</h1>
+					<h1 id="brand-small" class="main-title-sm brand" style="display:none;">Te Vas de Milonga</h1>
 				</div>
-				<div class="col-md-4 text-right controls {{#if hideCalendar}}hide{{/if}}">
+				<div class="col-xs-12 col-md-6 col-md-offset-4 subtitle-div">
+					<h3 class="subtitle">Toda la informacion sobre las milongas de Uruguay</h3>
+				</div>
+				<div class="col-md-12 text-center controls {{#if hideCalendar}}hide{{/if}}">
 					{{#if existsPreviousWeek}}
 
-							<button class="previous-week btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</button>
+							<button class="previous-week btn btn-header btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Semana anterior</button>
 
 					{{/if}}
 					{{#if existsNextWeek}}
 
-							<button class="next-week btn btn-default">Semana siguiente <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+							<button class="next-week btn btn-header btn-default">Semana siguiente <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 
 					{{/if}}
-				</div>
-				<div class="col-xs-12 col-md-6 subtitle-div">
-					<h3 class="subtitle">Toda la informacion sobre las milongas de Uruguay</h3>
-				</div>
-				<div class="col-md-6 text-right controls2 {{#if hideCalendar}}hide{{/if}}" style="margin-top:10px;">
 					
-						{{#unless currentUser}}
-							<button id="facebook-login" class="fb-login btn btn-default">Ingresar con Facebook</button>
-						{{else}}
-							<button id="logout" class="fb-login btn btn-default">{{currentUser.services.facebook.name}} - Salir</button>
-						{{/unless}}						
+					{{#unless currentUser}}
+						<button id="facebook-login" class="fb-login btn btn-header btn-default">Ingresar con Facebook</button>
+					{{else}}
+						<button id="logout" class="fb-login btn btn-header btn-default">{{currentUser.services.facebook.name}} - Salir</button>
+					{{/unless}}						
 
-						{{#if currentUser}}		
-							{{#unless showPubForm }}
-								<button class="show-pub-form btn btn-default">
-									<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicacion
-								</button>
-							{{/unless}}
-						{{/if}}
+					{{#if currentUser}}		
+						{{#unless showPubForm }}
+							<button class="show-pub-form btn btn-header btn-default">
+								<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicacion
+							</button>
+						{{/unless}}
+					{{/if}}
 
 
-						<button class="show-about btn btn-default">Sobre TVM</button>
+					<button class="show-about btn btn-header btn-default">Sobre TVM</button>
 				</div>
-				<div class="col-xs-3 col-md-4 controls-small {{#if hideCalendar}}hide{{/if}}">
+				<div class="col-xs-3 col-md-1 controls-small {{#if hideCalendar}}hide{{/if}}">
 					<div class="dropdown dropdown-small pull-right">
 						<button type="button" class="nav-small dropdown-toggle" id="ddm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 							<span class="sr-only">Toggle navigation</span>
