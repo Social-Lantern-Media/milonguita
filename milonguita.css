@@ -69,9 +69,9 @@ body{
 	margin: 10px 0;
 }
 
-.cancel-upvote{
-	color: blue;
-	border-color:blue;
+.cancel-upvote, .cancel-upvote:hover, .cancel-upvote:focus, .cancel-upvote:active, .cancel-upvote:visited{
+	color: #2B8AFF;
+	border-color:#2B8AFF;
 }
 
 .error{
@@ -110,13 +110,15 @@ body{
 .calendar-number{
 	font-family: 'Raleway', sans-serif;
 	font-weight: 100;
-	font-size:80px;
-	margin-top:0;
+	font-size:100px;
+	margin-top:-15px;
 }
 
 .calendar-day{
 	margin-bottom: 0;
 	text-transform:capitalize;
+	color:#FF4949;
+	font-weight:bold;
 }
 
 .main-title{
@@ -209,7 +211,7 @@ body{
 	line-height:inherit;
 	color:inherit;
 	word-break:inherit;
-	word-wrap:inherit;
+	word-wrap:break-word;
 	background-color:inherit;
 	border:inherit;
 	border-radius:inherit;
