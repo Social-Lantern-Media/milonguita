@@ -123,14 +123,12 @@ body{
 
 .main-title{
 	font-family: 'Dancing Script', cursive;
-	font-size:60px;
-	cursor: pointer;
+	font-size:65px;
 }
 
 .main-title-sm{		
 	font-family: 'Dancing Script', cursive;
 	font-size:30px;
-	cursor: pointer;
 	text-align: left;
 }
 
