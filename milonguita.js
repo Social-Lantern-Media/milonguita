@@ -52,8 +52,6 @@ if (Meteor.isClient) {
 	var subscriptionHandle;
 	subscriptionHandle = Meteor.subscribe("publications", Number(Session.get('weekNumber')));
 
-	//Meteor.subscribe("allPubs");
-
 	Meteor.subscribe("userData");
 	
 	Template.body.helpers({
@@ -803,7 +801,7 @@ if (Meteor.isServer){
 
 				UrlMatch = Match.Where(function (x) {
 								 check(x, String);
-								 var urlRegex = /^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
+								 var urlRegex = /https?\:\/\/(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/;
 
 								 return (urlRegex.test(x) || x == "");
 							  });
@@ -947,7 +945,7 @@ if (Meteor.isServer){
 						var errorMessage = error.response.data.message;
 					}else{
 						var errorCode = 500;
-						var errorMessage = "Cannot access the APIIII";
+						var errorMessage = "Cannot access the API";
 					}
 					var myError = new Meteor.Error(errorCode, errorMessage);
 					callback(myError, null);
@@ -1039,8 +1037,8 @@ if (Meteor.isServer) {
 		ServiceConfiguration.configurations.upsert(
 			{service: "facebook"},
 			{$set: {
-				appId: "1064352450294793",
-				secret: "0a6301cdc0f092e70637675c68bc952f",
+				appId: Meteor.settings.facebookAppId,
+				secret: Meteor.settings.facebookSecret,
 				requestPermissions: ['user_friends']}
 			}
 		);
