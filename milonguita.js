@@ -3,7 +3,7 @@ Publications = new Mongo.Collection("publications");
 
 // The name of the facebook user that will officiate as Admin.
 // This name should be in an ENV variable, change it!
-var ADMIN_NAME = "Tiago Páez";
+var ADMIN_NAME = Meteor.settings.public.adminId;
 
 // Dont allow users to update their 'profile' value.
 Meteor.users.deny({update: function () { return true; }});
