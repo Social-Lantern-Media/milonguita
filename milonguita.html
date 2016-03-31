@@ -13,7 +13,7 @@
   <meta property="og:url" content="http://boiling-bayou-3137.herokuapp.com" />
   <meta property="og:type" content="website" />
   <meta property="og:description" content="Encontra y comparti toda la informacion referente a las milongas y practicas en Uruguay" />
-  <meta property="og:app_id" content="1064352450294793" />
+  <meta property="fb:app_id" content="1064352450294793" />
   <meta property="og:locale" content="es_LA" />
   <meta property="og:image" content="http://boiling-bayou-3137.herokuapp.com/images/bg5.jpg" />
   <meta property="og:image:type" content="image/jpeg" />
@@ -31,7 +31,7 @@
 				<div class="col-xs-9 col-md-11 title-header-small text-left">
 					<h1 id="brand-small" class="main-title-sm brand" style="display:none;"><span style="cursor:pointer;">Te Vas de Milonga</span></h1>
 				</div>
-				<div class="col-xs-12 col-md-6 col-md-offset-4 subtitle-div">
+				<div class="col-xs-12 col-md-8 col-md-offset-2 text-center subtitle-div">
 					<h3 class="subtitle">Toda la informacion sobre las milongas de Uruguay</h3>
 				</div>
 				<div class="col-md-12 text-center controls {{#if hideCalendar}}hide{{/if}}">
@@ -405,11 +405,13 @@
 						&nbsp;						
 						<span class="">Costo: {{pubInfo.cost}}</span>
 					</p>
+					{{#if hasFBLink pubInfo.fbLink}}
 					<p class="pub-info-item">
 						<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 
 						&nbsp;
-						<span class="">Facebook: {{pubInfo.fbLink}}</span>
+						<span class="">Facebook: <a href="{{pubInfo.fbLink}}" target="_blank">{{pubInfo.fbLink}}</a></span>
 					</p>
+					{{/if}}
 					<p class="pub-info-item">
 						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> 
 						&nbsp;
