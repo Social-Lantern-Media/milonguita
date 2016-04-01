@@ -209,6 +209,14 @@ if (Meteor.isClient) {
 			check(weekNumber-1, validWeek); 
 
 			Session.set('weekNumber', weekNumber-1);
+
+			// If clicked the menu-xs, close it.
+			if ($('#menu-xs').hasClass('in')){
+				$('#menu-xs').removeClass('in');
+				$('#menu-xs').attr('aria-expanded', 'false');
+				// Remove the menu background color.
+				$('#menu-xs-bg').removeClass('dropdown-xs-bg');
+			}
 		},
 		"click .next-week": function(event){
 			event.preventDefault();
@@ -222,6 +230,14 @@ if (Meteor.isClient) {
 			check(weekNumber+1, validWeek);
 
 			Session.set('weekNumber', weekNumber+1);
+
+			// If clicked the menu-xs, close it.
+			if ($('#menu-xs').hasClass('in')){
+				$('#menu-xs').removeClass('in');
+				$('#menu-xs').attr('aria-expanded', 'false');
+				// Remove the menu background color.
+				$('#menu-xs-bg').removeClass('dropdown-xs-bg');
+			}
 		},
 		'click #facebook-login': function(event){
 			event.preventDefault();
@@ -245,7 +261,6 @@ if (Meteor.isClient) {
 			// Close the menu-xs.
 			$('#menu-xs').removeClass('in');
 			$('#menu-xs').attr('aria-expanded', 'false');
-
 			// Remove the menu background color.
 			$('#menu-xs-bg').removeClass('dropdown-xs-bg');
 		},
@@ -275,6 +290,15 @@ if (Meteor.isClient) {
 
 			// Scroll to the top.
 			$(document).scrollTop(0);
+		
+			// If clicked the menu-xs, close it.
+			if ($('#menu-xs').hasClass('in')){
+				$('#menu-xs').removeClass('in');
+				$('#menu-xs').attr('aria-expanded', 'false');
+				// Remove the menu background color.
+				$('#menu-xs-bg').removeClass('dropdown-xs-bg');
+			}
+
 		},
 		"click .brand": function(event){
 			if (Session.get("showPubForm")){
@@ -300,6 +324,14 @@ if (Meteor.isClient) {
 
 			// Remove the controls and shrink the header.
 			header_shrink(); 
+
+			// If clicked the menu-xs, close it.
+			if ($('#menu-xs').hasClass('in')){
+				$('#menu-xs').removeClass('in');
+				$('#menu-xs').attr('aria-expanded', 'false');
+				// Remove the menu background color.
+				$('#menu-xs-bg').removeClass('dropdown-xs-bg');
+			}
 		}		
 	});
 

@@ -92,6 +92,7 @@ body{
 
 .about{
 	border: 1px solid #eee;
+	margin-bottom:20px;
 }
 
 .odd-row{
@@ -282,5 +283,9 @@ body{
 
 	.title-edit{
 		margin-bottom:20px;
+	}
+	
+	.about{
+		margin:50px 0;
 	}
 }

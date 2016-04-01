@@ -174,7 +174,7 @@
 		{{/if}}
 
 		{{#if showAbout}}
-			<div class="row about" style="margin:50px 0;">
+			<div class="row about">
 				{{> aboutSection}}
 			</div>
 		{{/if}}
@@ -360,6 +360,9 @@
 				</div>
 			{{/if}}	
 		</div>
+		<div class="col-xs-12 text-center" style="margin:10px 0;">
+			<button class="close-info-pub btn btn-default">Volver</button>
+		</div>
 	</div>
 	<div class="col-md-12 info-md">	
 		<div class="col-md-12">		
@@ -462,7 +465,7 @@
 <template name="addPublication">
 	<div class="col-md-12 add {{#unless showPubForm }}hide{{/unless}}">
 		<div class="col-md-10 text-center title-add"><h2>Agregar una nueva publicacion</h2></div>
-		<div class="col-md-2" style="margin-top:25px;">
+		<div class="col-md-2 text-center" style="margin-top:25px;margin-bottom:10px;">
 			<button class="close-addPub btn btn-default">Cerrar &nbsp; <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 		</div>
 		<div class="col-md-12">
@@ -569,7 +572,7 @@
 	<div class="col-md-12 edit {{#unless showEditPubForm }}hide{{/unless}}">
 		<div class="col-md-12 title-edit">
 			<div class="col-md-10 text-center"><h2>Editar una publicacion</h2></div>
-			<div class="col-md-2" style="margin-top:25px;">
+			<div class="col-md-2 text-center" style="margin-top:25px;">
 				<button class="close-editPub btn btn-default">Cerrar &nbsp; <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 			</div>
 		</div>
@@ -670,7 +673,7 @@
 		<div class="col-md-10">
 			<h1>Sobre tvm!</h1>
 		</div>
-		<div class="col-md-2" style="margin-top:20px;">
+		<div class="col-md-2 visible-md visible-lg" style="margin-top:20px;">
 			<button class="close-about btn btn-default">Cerrar &nbsp; <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 		</div>
 	</div>
@@ -681,6 +684,9 @@
 
 <p>Pig cow sausage, pork andouille sirloin spare ribs t-bone pork chop bacon turducken flank. T-bone hamburger pancetta jerky, sausage ham prosciutto meatloaf biltong alcatra. Cupim tongue meatloaf, alcatra leberkas biltong landjaeger strip steak ground round prosciutto short loin pork shoulder andouille rump. Sirloin prosciutto spare ribs turkey, boudin filet mignon jerky porchetta strip steak. Doner capicola short loin pig tongue jowl. Tri-tip shankle chuck turkey tail.</p>
 	</div>
+	<div class="col-xs-12 text-center visible-xs visible-sm" style="margin:10px 0;">
+		<button class="close-about btn btn-default">Volver</button>
+	</div>
 </template>
 
 <template name="daysOfWeek">
@@ -690,7 +696,7 @@
 			<div class="row">
 				<div class="col-xs-12 col-md-12 day-grid">
 					<div class="col-xs-12 col-md-3">
-						<div class="col-xs-8 col-xs-offset-2 col-md-8 col-md-offset-2 box">
+						<div class="col-xs-6 col-xs-offset-3 col-md-8 col-md-offset-2 box">
 							<h3 class="text-center calendar-day">{{nameOfDay 0}}</h3>
 							<h1 class="text-center calendar-number">{{numberOfDate 0}}</h1>
 						</div>
@@ -708,7 +714,7 @@
 			<div class="row">
 				<div class="col-xs-12 col-md-12 day-grid">
 					<div class="col-xs-12 col-md-3">
-						<div class="col-xs-8 col-xs-offset-2 col-md-8 col-md-offset-2 box">
+						<div class="col-xs-6 col-xs-offset-3 col-md-8 col-md-offset-2 box">
 							<h3 class="text-center calendar-day">{{nameOfDay 1}}</h3>
 							<h1 class="text-center calendar-number">{{numberOfDate 1}}</h1>
 						</div>
@@ -726,7 +732,7 @@
 			<div class="row">
 				<div class="col-xs-12 col-md-12 day-grid">
 					<div class="col-xs-12 col-md-3">
-						<div class="col-xs-8 col-xs-offset-2 col-md-8 col-md-offset-2 box">
+						<div class="col-xs-6 col-xs-offset-3 col-md-8 col-md-offset-2 box">
 							<h3 class="text-center calendar-day">{{nameOfDay 2}}</h3>
 							<h1 class="text-center calendar-number">{{numberOfDate 2}}</h1>
 						</div>
@@ -744,7 +750,7 @@
 			<div class="row">
 				<div class="col-xs-12 col-md-12 day-grid">
 					<div class="col-xs-12 col-md-3">
-						<div class="col-xs-8 col-xs-offset-2 col-md-8 col-md-offset-2 box">
+						<div class="col-xs-6 col-xs-offset-3 col-md-8 col-md-offset-2 box">
 							<h3 class="text-center calendar-day">{{nameOfDay 3}}</h3>
 							<h1 class="text-center calendar-number">{{numberOfDate 3}}</h1>
 						</div>
@@ -762,7 +768,7 @@
 			<div class="row">
 				<div class="col-xs-12 col-md-12 day-grid">
 					<div class="col-xs-12 col-md-3">
-						<div class="col-xs-8 col-xs-offset-2 col-md-8 col-md-offset-2 box">
+						<div class="col-xs-6 col-xs-offset-3 col-md-8 col-md-offset-2 box">
 							<h3 class="text-center calendar-day">{{nameOfDay 4}}</h3>
 							<h1 class="text-center calendar-number">{{numberOfDate 4}}</h1>
 						</div>
@@ -780,7 +786,7 @@
 			<div class="row">
 				<div class="col-xs-12 col-md-12 day-grid">
 					<div class="col-xs-12 col-md-3">
-						<div class="col-xs-8 col-xs-offset-2 col-md-8 col-md-offset-2 box">
+						<div class="col-xs-6 col-xs-offset-3 col-md-8 col-md-offset-2 box">
 							<h3 class="text-center calendar-day">{{nameOfDay 5}}</h3>
 							<h1 class="text-center calendar-number">{{numberOfDate 5}}</h1>
 						</div>
@@ -798,7 +804,7 @@
 			<div class="row">
 				<div class="col-xs-12 col-md-12 day-grid">
 					<div class="col-xs-12 col-md-3">
-						<div class="col-xs-8 col-xs-offset-2 col-md-8 col-md-offset-2 box">
+						<div class="col-xs-6 col-xs-offset-3 col-md-8 col-md-offset-2 box">
 							<h3 class="text-center calendar-day">{{nameOfDay 6}}</h3>
 							<h1 class="text-center calendar-number">{{numberOfDate 6}}</h1>
 						</div>
