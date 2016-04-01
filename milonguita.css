@@ -95,6 +95,12 @@ body{
 	margin-bottom:20px;
 }
 
+.about-p{
+	margin:0 0 20px;
+	font-size:20px;
+	line-height:1.4;
+}
+
 .odd-row{
 	background-color: rgb(240, 240, 240);
 }
