@@ -224,7 +224,11 @@ body{
 }
 
 /* Medium devices (desktops, 992px and up) */
-@media (min-width: 992px) { 
+@media (min-width: 992px) {
+	.info{
+		margin-bottom:120px;
+	}
+	
 	.info-xs{
 		display:none;
 	}

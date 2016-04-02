@@ -217,6 +217,9 @@ if (Meteor.isClient) {
 				// Remove the menu background color.
 				$('#menu-xs-bg').removeClass('dropdown-xs-bg');
 			}
+
+			// Scroll to the top.
+			$(document).scrollTop(0);
 		},
 		"click .next-week": function(event){
 			event.preventDefault();
@@ -238,6 +241,9 @@ if (Meteor.isClient) {
 				// Remove the menu background color.
 				$('#menu-xs-bg').removeClass('dropdown-xs-bg');
 			}
+
+			// Scroll to the top.
+			$(document).scrollTop(0);			
 		},
 		'click #facebook-login': function(event){
 			event.preventDefault();
