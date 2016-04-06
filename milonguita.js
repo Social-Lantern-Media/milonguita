@@ -905,40 +905,23 @@ if (Meteor.isServer){
 				// Before removing the publication, check if it's a pub that is marked to be kept.
 				// If it is, create a new pub with the same info, in a month from now.
 				if (oldPubs[i].keepPublication){
-					const newPub_name = oldPubs[i].name;
-					const newPub_type =  oldPubs[i].type;
-					const newPub_createdAt = moment.utc().utcOffset("-03:00").toDate();
-					const newPub_description = oldPubs[i].description;
-					const newPub_address = oldPubs[i].address;
-					const newPub_date = moment(OldPubs[i].date).add(7*4, 'days').toDate();
-					const newPub_cost = oldPubs[i].cost;
-					const newPub_timeStarts = oldPubs[i].timeStarts;
-					const newPub_timeEnds = oldPubs[i].timeEnds;
-					const newPub_fbLink = oldPubs[i].fbLink;
-					const newPub_picPublicId = oldPubs[i].picPublicId;
-					const newPub_upvotes = oldPubs[i].upvotes;
-					const newPub_upvoteCount = oldPubs[i].upvoteCount;
-					const newPub_keepPublication = oldPubs[i].keepPublication;
-					const newPub_owner = oldPubs[i].owner;
-					const newPub_username = oldPubs[i].username;
-
 					Publications.insert({
-						name: newPub_name,
-						type: newPub_type,
-						createdAt: newPub_createdAt,
-						description: newPub_description,
-						address: newPub_address,
-						date: newPub_date,
-						cost: newPub_cost,
-						timeStarts: newPub_timeStarts,
-						timeEnds: newPub_timeEnds,
-						fbLink: newPub_fbLink,
-						picPublicId: newPub_picPublicId,
-						upvotes: newPub_upvotes,
-						upvoteCount: newPub_upvoteCount,
-						keepPublication: newPub_keepPublication,
-						owner: newPub_owner,
-						username: newPub_username
+						name: oldPubs[i].name,
+						type: oldPubs[i].type,
+						createdAt: moment.utc().utcOffset("-03:00").toDate(),
+						description: oldPubs[i].description,
+						address: oldPubs[i].address,
+						date: moment(oldPubs[i].date).add(7*4, 'days').toDate(),
+						cost: oldPubs[i].cost,
+						timeStarts: oldPubs[i].timeStarts,
+						timeEnds: oldPubs[i].timeEnds,
+						fbLink: oldPubs[i].fbLink,
+						picPublicId: oldPubs[i].picPublicId,
+						upvotes: oldPubs[i].upvotes,
+						upvoteCount: oldPubs[i].upvoteCount,
+						keepPublication: oldPubs[i].keepPublication,
+						owner: oldPubs[i].owner,
+						username: oldPubs[i].username
 					});
 				}
 				
