@@ -355,12 +355,18 @@
 		<div class="col-xs-12" style="margin-top:10px;">
 			{{#if currentUser}}				
 				<div class="col-xs-12 text-left">
-					{{#unless isEmptyFBFriendsUpvoted}}
-						<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicacion.</p>
-					{{/unless}}
-					{{#each getFBFriendsUpvoted}}
-							<img src="{{url}}" title="{{name}}"/>
-					{{/each}}
+					{{#if showSpinnerFBFriends}}
+						<div class="col-xs-12" style="margin-bottom:40px;">
+							{{> spinner}}
+						</div>
+					{{else}}
+						{{#unless isEmptyFBFriendsUpvoted}}
+							<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicacion.</p>
+						{{/unless}}
+						{{#each getFBFriendsUpvoted}}
+								<img src="{{url}}" title="{{name}}"/>
+						{{/each}}	
+					{{/if}}
 				</div>
 			{{/if}}	
 		</div>
@@ -447,12 +453,18 @@
 				{{#if currentUser}}				
 					<div class="col-md-4">
 						<div class="col-md-12 text-left">
-							{{#unless isEmptyFBFriendsUpvoted}}
-								<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicacion.</p>
-							{{/unless}}
-							{{#each getFBFriendsUpvoted}}
-									<img src="{{url}}" title="{{name}}"/>
-							{{/each}}
+							{{#if showSpinnerFBFriends}}
+								<div class="col-md-12" style="margin-bottom:50px;">								
+									{{> spinner}}
+								</div>
+							{{else}}
+								{{#unless isEmptyFBFriendsUpvoted}}
+									<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicacion.</p>
+								{{/unless}}
+								{{#each getFBFriendsUpvoted}}
+										<img src="{{url}}" title="{{name}}"/>
+								{{/each}}
+							{{/if}}
 						</div>
 					</div>
 				{{/if}}

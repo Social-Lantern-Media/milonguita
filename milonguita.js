@@ -121,6 +121,9 @@ if (Meteor.isClient) {
 		},
 		hasFBLink: function(fbLink){
 			return (fbLink != "");
+		},
+		showSpinnerFBFriends: function(){
+			return Session.get('fbFriendsSpinner');
 		}
 	});
 
@@ -347,9 +350,11 @@ if (Meteor.isClient) {
 
 			Session.set('showPubInfo', false);
 			Session.set('showPubInfoId', '');
+			Session.set('fbFriendsSpinner', false);
 
 			delete Session.keys.profile_pics;
 			delete Session.keys.num_profile_pics;
+			delete Session.keys.fbFriendsSpinner;
 			
 			// Make the controls available and expand the header.
 			header_expand();
@@ -397,6 +402,9 @@ if (Meteor.isClient) {
 			// Scroll to the top.
 			$(document).scrollTop(0);
 
+			// Set the reactive variable for the spinner.
+			Session.set('fbFriendsSpinner', true);
+
 			if (Meteor.user()){
 				Meteor.call("getFBFriends", Session.get('showPubInfoId'), function(err, res){				
 					if (err){
@@ -405,6 +413,8 @@ if (Meteor.isClient) {
 						Session.set("profile_pics", res);
 						Session.set("num_profile_pics", res.length);
 					}
+					// Remove the reactive variable for the spinner.
+					Session.set('fbFriendsSpinner', false);
 				});				
 			}
 		}
