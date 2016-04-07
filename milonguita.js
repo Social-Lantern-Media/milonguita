@@ -595,17 +595,27 @@ if (Meteor.isClient) {
 		$('#add-datepicker').datetimepicker({
 								    inline: true,
 								    format: 'MM/DD/YYYY',
+									 locale: 'es',
 									 useCurrent: false
 								});
 
 		// Select today as minDate
 		$('#add-datepicker').data('DateTimePicker').minDate(moment.utc().utcOffset("-03:00").toDate());
 
+		// Validation rule for the fb url
+		$.validator.addMethod('urlFb', (fbUrl) => {
+			let urlRegex = /^(?:https?\:\/\/)?(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/;
+			return (urlRegex.test(fbUrl) || fbUrl === "");
+		});
+
 		// Make client-side validation available
 		$('.new-publication').validate({
 			rules: {
 				name: {
 					maxlength: 25
+				},
+				fbLink: {
+					urlFb : true
 				},
 				photo_add: {
 					accept: "image/*",
@@ -633,7 +643,7 @@ if (Meteor.isClient) {
 					required: "El campo Finaliza no puede estar vacio."
 				},
 				fbLink: {
-					url: "La URL ingresada no es valida."
+					urlFb: "La URL ingresada no es valida."
 				},
 				photo_add: {
 					accept: "El archivo elegido no es una imagen.",
@@ -653,6 +663,7 @@ if (Meteor.isClient) {
 		// Initialize the date picker		
 		$('#edit-datepicker').datetimepicker({
 								    inline: true,
+									 locale: 'es',
 								    format: 'MM/DD/YYYY'
 								});
 
@@ -667,11 +678,20 @@ if (Meteor.isClient) {
 		// Put the current image in the Session variable
 		Session.set("pub_pic_id", oldPublication.picPublicId);
 
+		// Validation rule for the fb url
+		$.validator.addMethod('urlFb', (fbUrl) => {
+			let urlRegex = /^(?:https?\:\/\/)?(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/;
+			return (urlRegex.test(fbUrl) || fbUrl === "");
+		});
+
 		// Make client-side validation available
 		$('.edit-publication').validate({
 			rules: {
 				name: {
 					maxlength: 25
+				},
+				fbLink: {
+					urlFb: true
 				},
 				photo: {
 					accept: "image/*",
@@ -699,7 +719,7 @@ if (Meteor.isClient) {
 					required: "El campo Finaliza no puede estar vacio."
 				},
 				fbLink: {
-					url: "La URL ingresada no es valida."
+					urlFb: "La URL ingresada no es valida."
 				},
 				photo: {
 					accept: "El archivo elegido no es una imagen.",
@@ -734,7 +754,7 @@ if (Meteor.isServer){
 
 				UrlMatch = Match.Where(function (x) {
 								 check(x, String);
-								 var urlRegex = /https?\:\/\/(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/;
+								 var urlRegex = /^(?:https?\:\/\/)?(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/;
 
 								 return (urlRegex.test(x) || x == "");
 							  });
@@ -838,7 +858,7 @@ if (Meteor.isServer){
 
 				UrlMatch = Match.Where(function (x) {
 								 check(x, String);
-								 var urlRegex = /https?\:\/\/(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/;
+								 var urlRegex = /^(?:https?\:\/\/)?(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/;
 
 								 return (urlRegex.test(x) || x == "");
 							  });
