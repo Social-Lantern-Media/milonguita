@@ -2,7 +2,7 @@
   <title>Te Vas de Milonga</title>
   <meta name="application-name" content="Te Vas de Milonga">
   <meta name="author" content="Tiago Paez">
-  <meta name="description" content="Una pagina donde podras encontrar y compartir toda la informacion referente a las milongas y practicas que suceden en Uruguay.">
+  <meta name="description" content="Una pagina donde podrás encontrar y compartir toda la información referente a las milongas y prácticas que suceden en Uruguay.">
   <meta name="keywords" content="tango, uruguay, milonga, practica, informacion, milongas, tango uruguay, uruguay tango">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
@@ -12,12 +12,12 @@
   <!-- Facebook Open Graph meta tags -->
   <meta property="og:title" content="Te Vas de Milonga" />
   <meta property="og:site_name" content="Te Vas de Milonga"/>
-  <meta property="og:url" content="http://boiling-bayou-3137.herokuapp.com" />
+  <meta property="og:url" content="http://www.tevasdemilonga.org" />
   <meta property="og:type" content="website" />
-  <meta property="og:description" content="Encontra y comparti toda la informacion referente a las milongas y practicas en Uruguay" />
+  <meta property="og:description" content="Encontra y compartí toda la información referente a las milongas y prácticas en Uruguay" />
   <meta property="fb:app_id" content="1064352450294793" />
   <meta property="og:locale" content="es_LA" />
-  <meta property="og:image" content="http://boiling-bayou-3137.herokuapp.com/images/share_fb_pic.png" />
+  <meta property="og:image" content="http://www.tevasdemilonga.org/images/share_fb_pic.png" />
   <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -34,7 +34,7 @@
 					<h1 id="brand-small" class="main-title-sm brand" style="display:none;"><span style="cursor:pointer;">Te Vas de Milonga</span></h1>
 				</div>
 				<div class="col-xs-12 col-md-8 col-md-offset-2 text-center subtitle-div">
-					<h3 class="subtitle">Toda la informacion sobre las milongas de Uruguay</h3>
+					<h3 class="subtitle">Toda la información sobre las milongas de Uruguay</h3>
 				</div>
 				<div class="col-md-12 text-center controls {{#if hideCalendar}}hide{{/if}}">
 					{{#if existsPreviousWeek}}
@@ -57,7 +57,7 @@
 					{{#if currentUser}}		
 						{{#unless showPubForm }}
 							<button class="show-pub-form btn btn-header btn-default">
-								<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicacion
+								<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicación
 							</button>
 						{{/unless}}
 					{{/if}}
@@ -87,7 +87,7 @@
 						 <li>
 							{{#if currentUser}}		
 								{{#unless showPubForm }}
-									<a href="#" class="show-pub-form"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicacion</a>							
+									<a href="#" class="show-pub-form"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar una publicación</a>							
 								{{/unless}}
 							{{/if}}
 						 </li>
@@ -149,7 +149,7 @@
 						</li>
 						<li class="separator" role="separator"></li>
 						<li>
-							<a href="#" class="close-menu-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cerrar Menu</a>
+							<a href="#" class="close-menu-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cerrar Menú</a>
 						</li>
 					</ul>
 				</div>
@@ -279,7 +279,7 @@
 			</div>
 			<div class="col-md-12 text-center" style="margin-top:5px;margin-bottom:10px;">
 				<p>
-					<button class="pub-info btn btn-default">Ver mas</button>
+					<button class="pub-info btn btn-default">Ver más</button>
 				</p>
 				{{#if isOwnerOrAdmin }}
 					<button class="btn btn-default delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar</button>
@@ -346,7 +346,7 @@
 			<p class="pub-info-item">
 				<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 
 				&nbsp;
-				<span class="">Descripcion:</span>
+				<span class="">Descripción:</span>
 			</p>
 			<div class="col-xs-12 text-left">
 				<pre>{{pubInfo.description}}</pre>
@@ -392,12 +392,12 @@
 					<p class="pub-info-item">
 							<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> 
 							&nbsp; 
-							<span class="">Tipo de publicacion: {{pubInfo.type}}</span>
+							<span class="">Tipo de publicación: {{pubInfo.type}}</span>
 					</p>
 					<p class="pub-info-item">
 						<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> 
 						&nbsp;						
-						<span class="">Direccion: {{pubInfo.address}}</span>
+						<span class="">Dirección: {{pubInfo.address}}</span>
 					</p>
 					<p class="pub-info-item">
 						<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
@@ -442,7 +442,7 @@
 					<p class="pub-info-item">
 						<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 
 						&nbsp;
-						<span class="">Descripcion: </span>
+						<span class="">Descripción: </span>
 					</p>
 					<div class="col-md-12 text-left">
 						<pre class="pre">{{pubInfo.description}}</pre>
@@ -459,7 +459,7 @@
 								</div>
 							{{else}}
 								{{#unless isEmptyFBFriendsUpvoted}}
-									<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicacion.</p>
+									<p>{{numFBFriendsUpvoted}} de tus amigos recomiendan esta publicación.</p>
 								{{/unless}}
 								{{#each getFBFriendsUpvoted}}
 										<img src="{{url}}" title="{{name}}"/>
@@ -475,7 +475,7 @@
 
 <template name="addPublication">
 	<div class="col-md-12 add {{#unless showPubForm }}hide{{/unless}}">
-		<div class="col-md-10 text-center title-add"><h2>Agregar una nueva publicacion</h2></div>
+		<div class="col-md-10 text-center title-add"><h2>Agregar una nueva publicación</h2></div>
 		<div class="col-md-2 text-center" style="margin-top:25px;margin-bottom:10px;">
 			<button class="close-addPub btn btn-default">Cerrar &nbsp; <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 		</div>
@@ -487,7 +487,7 @@
 					<label for="addPubName" class="col-sm-2 control-label">*Nombre:</label>
 					<div class="col-sm-10">
 						<input id="addPubName" type="text" name="name" class="required form-control" />
-						<span class="help-block">Nombre de la milonga\practica. (Maximo 25 caracteres)</span>
+						<span class="help-block">Nombre de la milonga\práctica. (Maximo 25 caracteres)</span>
 					</div>
 				</div>
 				<div class="form-group">
@@ -501,7 +501,7 @@
 					</div>
 				</div>	
 				<div class="form-group">
-					<label for="addPubAddress" class="col-sm-2 control-label">*Direccion: </label>
+					<label for="addPubAddress" class="col-sm-2 control-label">*Dirección: </label>
 					<div class="col-sm-10">				
 						<input id="addPubAddress" type="text" name="address" class="required form-control" />
 					</div>
@@ -530,7 +530,7 @@
 					<label for="addPubFBLink" class="col-sm-2 control-label">Facebook link:</label>
 					<div class="col-sm-10">				
 						<input id="addPubFBLink" type="text" name="fbLink" class="form-control" />
-						<span class="help-block">Copiar aqui el link de la publicacion de facebook de la milonga\practica\evento que se esta creando.<br/> (Este campo no es obligatorio)</span>
+						<span class="help-block">Copiar aquí el link de la publicacion de facebook de la milonga\práctica\evento que se esta creando.<br/> (Este campo no es obligatorio)</span>
 					</div>
 				</div>
 				<div class="form-group">
@@ -550,9 +550,9 @@
 					</div>
 				</div>														
 				<div class="form-group">
-					<label for="addPubDesc" class="col-sm-12 text-left">*Descripcion:</label>
+					<label for="addPubDesc" class="col-sm-12 text-left">*Descripción:</label>
 					<div class="col-sm-12">
-						<span class="help-block">Aqui puedes agregar mas informacion sobre tu publicacion. <br/> p.e: DJ, exhibiciones, aclaraciones acerca del costo o el horario.</span>				
+						<span class="help-block">Aquí puedes agregar mas información sobre tu publicación. <br/> p.e: DJ, exhibiciones, aclaraciones acerca del costo o el horario.</span>				
 						<textarea id="addPubDesc" name="description" class="required form-control" rows="7" ></textarea>
 					</div>
 				</div>
@@ -560,7 +560,7 @@
 					<div class="col-sm-offset-2 col-sm-10">
 						<div class="checkbox">
 							<label>
-								<input type="checkbox" name="keepPublication" /> Mantener publicacion.
+								<input type="checkbox" name="keepPublication" /> Mantener publicación.
 							</label>
 							<span class="glyphicon glyphicon-question-sign" style="font-size:20px;" data-toggle="tooltip" data-placement="right" title="En caso de marcar esta opcion, esta publicacion se mantendra en el sistema, apareciendo cada semana en el mismo dia para el cual fue creada." aria-hidden="true"></span>
 						</div>
@@ -582,7 +582,7 @@
 <template name="editPublication">
 	<div class="col-md-12 edit {{#unless showEditPubForm }}hide{{/unless}}">
 		<div class="col-md-12 title-edit">
-			<div class="col-md-10 text-center"><h2>Editar una publicacion</h2></div>
+			<div class="col-md-10 text-center"><h2>Editar una publicación</h2></div>
 			<div class="col-md-2 text-center" style="margin-top:25px;">
 				<button class="close-editPub btn btn-default">Cerrar &nbsp; <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 			</div>
@@ -598,7 +598,7 @@
 							<label for="editPubName" class="col-sm-2 control-label">*Nombre:</label>
 							<div class="col-sm-10">				
 								<input id="editPubName" type="text" name="name" class="required form-control" value="{{editInfo.name}}" />
-								<span class="help-block">Nombre de la milonga\practica. (Maximo 25 caracteres)</span>
+								<span class="help-block">Nombre de la milonga\práctica. (Máximo 25 caracteres)</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -607,12 +607,12 @@
 								<select id="editPubType" name="type" class="required form-control">
 								  <option value="milonga" {{isTypeMilonga editInfo.type}} >Milonga</option> 
 								  <option value="event"  {{isTypeEvent editInfo.type}} >Evento</option>
-								  <option value="practica" {{isTypePractica editInfo.type}} >Practica</option>
+								  <option value="practica" {{isTypePractica editInfo.type}} >Práctica</option>
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="editPubAddress" class="col-sm-2 control-label">*Direccion:</label>
+							<label for="editPubAddress" class="col-sm-2 control-label">*Dirección:</label>
 							<div class="col-sm-10">				
 								<input id="editPubAddress" type="text" name="address" class="required form-control" value="{{editInfo.address}}" />
 							</div>
@@ -641,7 +641,7 @@
 							<label for="editPubFBLink" class="col-sm-2 control-label">Facebook link:</label>
 							<div class="col-sm-10">
 								<input id="editPubFBLink" type="text" name="fbLink" class="form-control" value="{{editInfo.fbLink}}" />
-								<span class="help-block">Copiar aqui el link de la publicacion de facebook de la milonga\practica\evento que se esta creando.<br/> (Este campo no es obligatorio)</span>
+								<span class="help-block">Copiar aqui el link de la publicacion de facebook de la milonga\práctica\evento que se esta creando.<br/> (Este campo no es obligatorio)</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -661,10 +661,10 @@
 							</div>
 						</div>																
 						<div class="form-group">
-							<label for="editPubDesc" class="col-sm-12 text-left">*Descripcion: </label>
+							<label for="editPubDesc" class="col-sm-12 text-left">*Descripción: </label>
 							<div class="col-sm-12">				
 								<textarea id="editPubDesc" name="description" class="required form-control" rows="7" value="{{editInfo.description}}" ></textarea>
-								<span class="help-block">Aqui puedes agregar mas informacion sobre tu publicacion. <br/> p.e: DJ, exhibiciones, aclaraciones acerca del costo o el horario.</span>
+								<span class="help-block">Aquí puedes agregar mas información sobre tu publicación. <br/> p.e: DJ, exhibiciones, aclaraciones acerca del costo o el horario.</span>
 							</div>
 						</div>
 					</div>
@@ -689,21 +689,21 @@
 		</div>
 	</div>
 	<div class="col-md-12" style="margin-top:15px;">
-		<p class="about-p">Te Vas de Milonga es una plataforma que busca brindar un espacio colaborativo donde sea posible publicar y consultar informacion sobre las milongas y eventos relacionados al tango en Uruguay.
-Podras encontrar informacion (fecha, direccion, horario, costo, etc) de las milongas que vayan a suceder dentro del proximo mes.</p>
+		<p class="about-p">Te Vas de Milonga es una plataforma que busca brindar un espacio colaborativo donde sea posible publicar y consultar información sobre las milongas y eventos relacionados al tango en Uruguay.
+Podrás encontrar información (fecha, dirección, horario, costo, etc) de las milongas que vayan a suceder dentro del próximo mes.</p>
 
-	<p class="about-p">Esta plataforma busca ser la respuesta a la tipica pregunta, donde se milonguea hoy?<br/>
+	<p class="about-p">Esta plataforma busca ser la respuesta a la típica pregunta, donde se milonguea hoy?<br/>
 Intentando brindar dicha respuesta de manera simple, ya sea para los milongueros uruguayos como para los milongueros provenientes de otras tierras.</p>
 
-	<p class="about-p">Creo que la fuerza y solidez de nuestra comunidad tanguera reside en la pasion y el trabajo de sus integrantes, algo que he presenciado muchas veces. La creacion de esta plataforma es mi granito de arena.</p>
+	<p class="about-p">Creo que la fuerza y solidez de nuestra comunidad tanguera reside en la pasión y el trabajo de sus integrantes, algo que he presenciado muchas veces. La creación de esta plataforma es mi granito de arena.</p>
 
-	<p class="about-p">Te Vas de Milonga es fundamentalmente colaborativa, para que alcance su maximo potencial es importante que los responsables de las milongas publiquen la informacion de sus diferentes milongas. Los usuarios juegan tambien un papel importante, ya que pueden recomendar sus milongas favoritas para ayudar a guiar a futuros visitantes.</p>
+	<p class="about-p">Te Vas de Milonga es fundamentalmente colaborativa, para que alcance su máximo potencial es importante que los responsables de las milongas publiquen la información de sus diferentes milongas. Los usuarios juegan también un papel importante, ya que pueden recomendar sus milongas favoritas para ayudar a guiar a futuros visitantes.</p>
 
-	<p class="about-p">Es posible ingresar al portal utilizando un usuario de Facebook. Al ingresar, esta habilitando a Facebook a compartir su perfil publico y su lista de amigos con Te Vas de Milonga. El perfil publico es utilizado solamente para obtener su nombre, mientras que la lista de amigos se utiliza para mostrarle quienes de sus amigos recomendaron una milonga.
+	<p class="about-p">Es posible ingresar al portal utilizando un usuario de Facebook. Al ingresar, está habilitando a Facebook a compartir su perfil público y su lista de amigos con Te Vas de Milonga. El perfil público es utilizado solamente para obtener su nombre, mientras que la lista de amigos se utiliza para mostrarle quienes de sus amigos recomendaron una milonga.
 Te Vas de Milonga NO posee permisos para publicar contenido en Facebook en su nombre.
-No es necesario loguearse con Facebook para consultar la informacion, por lo que de no sentirse comodo compartiendo dicha informacion, no tiene por que hacerlo.</p>
+No es necesario loguearse con Facebook para consultar la información, por lo que de no sentirse cómodo compartiendo dicha información, no tiene por que hacerlo.</p>
 
-	<p class="about-p">Por ultimo aclarar que todo el trabajo realizado para construir Te Vas de Milonga fue realizado de manera honoraria y en mi tiempo libre.</p>
+	<p class="about-p">Por último aclarar que todo el trabajo realizado para construir Te Vas de Milonga fue realizado de manera honoraria y en mi tiempo libre.</p>
 
 	<p class="about-p">Por cualquier consulta o sugerencia: info@tevasdemilonga.com</p>
 
